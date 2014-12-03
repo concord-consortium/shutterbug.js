@@ -27,55 +27,9 @@ function Shutterbug(selector, imgDst, callback, id, jQuery, opt) {
   this.id = id;
   this.iframeReqTimeout = MAX_TIMEOUT;
 
-  var self = this;
-  var handleMessage = function(message, signature, func) {
-    var data = message.data;
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-        if (data.type === signature) {
-          func(data);
-        }
-      } catch(e) {
-        // Not a json message. Ignore it. We only speak json.
-      }
-    }
-  };
-
-  var htmlFragRequestListen = function(message) {
-    var send_response = function(data) {
-      // Update timeout. When we receive a request from parent, we have to finish nested iframes
-      // rendering in that time. Otherwise parent rendering will timeout.
-      // Backward compatibility: Shutterbug v0.1.x don't send iframeReqTimeout.
-      self.iframeReqTimeout = data.iframeReqTimeout != null ? data.iframeReqTimeout : MAX_TIMEOUT;
-      self.getHtmlFragment(function(html) {
-        var response = {
-          type:        'htmlFragResponse',
-          value:       html,
-          iframeReqId: data.iframeReqId,
-          id:          data.id // return to sender only...
-        };
-        message.source.postMessage(JSON.stringify(response), "*");
-      });
-    };
-    handleMessage(message, 'htmlFragRequest', send_response);
-  };
-
-  var htmlFragResponseListen = function(message) {
-    var send_response = function(data) {
-      if (data.id === self.id) {
-        // Backward compatibility: Shutterbug v0.1.x don't send iframeReqId.
-        var ifeameReqId = data.iframeReqId != null ? data.iframeReqId : 0;
-        self._iframeContentRequests[ifeameReqId].resolve(data.value);
-      }
-    };
-    handleMessage(message, 'htmlFragResponse', send_response);
-  };
-
   $(document).ready(function () {
-    window.addEventListener('message', htmlFragRequestListen, false);
-    window.addEventListener('message', htmlFragResponseListen, false);
-  });
+    window.addEventListener('message', this._postMessageHandler.bind(this), false);
+  }.bind(this));
 };
 
 Shutterbug.prototype.getHtmlFragment = function(callback) {
@@ -85,34 +39,17 @@ Shutterbug.prototype.getHtmlFragment = function(callback) {
   // - element itself is an iframe - .addBack('iframe')
   // - element descentands are iframes - .find('iframe')
   var $iframes = $element.find('iframe').addBack("iframe");
-  this._iframeContentRequests = [];
 
+  this._iframeContentRequests = [];
   $iframes.each(function(i, iframeElem) {
-    var message  = {
-      type:        'htmlFragRequest',
-      id:          self.id,
-      iframeReqId: i,
-      // We have to provide smaller timeout while sending message to nested iframes.
-      // Otherwise, when one of the nested iframes timeouts, then all will do the
-      // same and we won't render anything - even iframes that support Shutterbug.
-      iframeReqTimeout: self.iframeReqTimeout * 0.6
-    };
-    iframeElem.contentWindow.postMessage(JSON.stringify(message), "*");
-    var requestDeffered = new $.Deferred();
-    self._iframeContentRequests[i] = requestDeffered;
-    setTimeout(function() {
-      // It handles a situation in which iframe doesn't support Shutterbug.
-      // When we doesn't receive answer for some time, assume that we can't
-      // render this particular iframe (provide null as iframe description).
-      if (requestDeffered.state() !== "resolved") {
-        requestDeffered.resolve(null);
-      }
-    }, self.iframeReqTimeout);
+    // Note that position of the iframe is used as its ID.
+    self._postHtmlFragRequestToIframe(iframeElem, i);
   });
 
+  // Continue when we receive responses from all the nested iframes.
+  // Nested iframes descriptions will be provided as arguments.
   $.when.apply($, this._iframeContentRequests).done(function() {
-    // This function is called when we receive responses from all nested iframes.
-    // Nested iframes descriptions will be provided as arguments.
+
     $element.trigger('shutterbug-saycheese');
 
     var css     = $('<div>').append($('link[rel="stylesheet"]').clone()).append($('style').clone()).html();
@@ -320,5 +257,77 @@ Shutterbug.prototype.setFailureCallback = function(failCallback) {
 Shutterbug.prototype.useIframeSizeHack = function(b) {
   this._useIframeSizeHack = b;
 };
+
+// ### Iframe-iframe communication related methods ###
+
+Shutterbug.prototype._postMessageHandler = function(message) {
+  function handleMessage(message, type, handler) {
+    var data = message.data;
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+        if (data.type === type) {
+          handler(data, message.source);
+        }
+      } catch(e) {
+        // Not a json message. Ignore it. We only speak json.
+      }
+    }
+  }
+  handleMessage(message, 'htmlFragRequest', this._htmlFragRequestHandler.bind(this));
+  handleMessage(message, 'htmlFragResponse', this._htmlFragResponseHandler.bind(this));
+};
+
+// Iframe receives question about its content.
+Shutterbug.prototype._htmlFragRequestHandler = function(data, source) {
+  // Update timeout. When we receive a request from parent, we have to finish nested iframes
+  // rendering in that time. Otherwise parent rendering will timeout.
+  // Backward compatibility: Shutterbug v0.1.x don't send iframeReqTimeout.
+  this.iframeReqTimeout = data.iframeReqTimeout != null ? data.iframeReqTimeout : MAX_TIMEOUT;
+  this.getHtmlFragment(function(html) {
+    var response = {
+      type:        'htmlFragResponse',
+      value:       html,
+      iframeReqId: data.iframeReqId,
+      id:          data.id // return to sender only
+    };
+    source.postMessage(JSON.stringify(response), "*");
+  });
+};
+
+// Parent receives content from iframes.
+Shutterbug.prototype._htmlFragResponseHandler = function(data) {
+  if (data.id === this.id) {
+    // Backward compatibility: Shutterbug v0.1.x don't send iframeReqId.
+    var iframeReqId = data.iframeReqId != null ? data.iframeReqId : 0;
+    this._iframeContentRequests[iframeReqId].resolve(data.value);
+  }
+};
+
+// Parent asks iframes about their content.
+Shutterbug.prototype._postHtmlFragRequestToIframe = function(iframeElem, iframeId) {
+  var message  = {
+    type:        'htmlFragRequest',
+    id:          this.id,
+    iframeReqId: iframeId,
+    // We have to provide smaller timeout while sending message to nested iframes.
+    // Otherwise, when one of the nested iframes timeouts, then all will do the
+    // same and we won't render anything - even iframes that support Shutterbug.
+    iframeReqTimeout: this.iframeReqTimeout * 0.6
+  };
+  iframeElem.contentWindow.postMessage(JSON.stringify(message), "*");
+  var requestDeffered = new $.Deferred();
+  this._iframeContentRequests[iframeId] = requestDeffered;
+  setTimeout(function() {
+    // It handles a situation in which iframe doesn't support Shutterbug.
+    // When we doesn't receive answer for some time, assume that we can't
+    // render this particular iframe (provide null as iframe description).
+    if (requestDeffered.state() !== "resolved") {
+      requestDeffered.resolve(null);
+    }
+  }, this.iframeReqTimeout);
+};
+
+// ###
 
 module.exports = Shutterbug;
