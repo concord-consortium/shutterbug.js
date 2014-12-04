@@ -34,8 +34,15 @@ module.exports = {
   },
 
   enable: function(selector) {
+    this.disable();
     selector = selector || 'body';
-    var worker = new ShutterbugWorker({selector: selector});
-    worker.enableIframeCommunication();
+    this._iframeWorker = new ShutterbugWorker({selector: selector});
+    this._iframeWorker.enableIframeCommunication();
+  },
+
+  disable: function() {
+    if (this._iframeWorker) {
+      this._iframeWorker.disableIframeCommunication();
+    }
   }
 };
