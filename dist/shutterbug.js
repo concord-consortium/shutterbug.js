@@ -111,7 +111,7 @@ module.exports = {
     $returnElm.css('background', $elem.css('background'));
     $returnElm.attr('width', $elem.width());
     $returnElm.attr('height', $elem.height());
-    return returnElm;
+    return $returnElm;
   },
 
   generateFullHtmlFromFragment: function(fragment) {
