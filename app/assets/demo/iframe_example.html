@@ -24,13 +24,11 @@
   </body>
   <script type="text/javascript">
     $(document).ready(function(e) {
-      var bug1 = new Shutterbug({selector: "#src1", dstSelector: "#dst1"});
       $("button.shutterbug1").click(function(e) {
-        bug1.getDomSnapshot();
+        Shutterbug.snapshot("#src1", "#dst1");
       });
-      var bug2 = new Shutterbug({selector: "#src2", dstSelector: "#dst2"});
       $("button.shutterbug2").click(function(e) {
-        bug2.getDomSnapshot();
+        Shutterbug.snapshot("#src2", "#dst2");
       });
     });
   </script>

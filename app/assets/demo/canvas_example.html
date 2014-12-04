@@ -27,14 +27,11 @@
       };
       img.src = "The_Scream.jpg";
 
-      var bug = new Shutterbug({
-        selector: "#src",
-        dstSelector: "#dst",
-        format: "jpeg",
-        quality: 0.75
-      });
       $("button.shutterbug").click(function(e) {
-        bug.getDomSnapshot();
+        Shutterbug.snapshot("#src", "#dst", {
+          format: "jpeg",
+          quality: 0.75
+        });
       });
     });
   </script>
