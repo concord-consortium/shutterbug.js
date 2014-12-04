@@ -16,8 +16,8 @@
     <div id="src1">
       <iframe src="iframe3.html" width="400" height="300"></iframe>
     </div>
-    <button class="shutterbug" data-dst="#dst">Snapshot</button>
-    <div id="dst"></div>
+    <button class="shutterbug1" data-dst="#dst">Snapshot</button>
+    <div id="dst1"></div>
 
     <div id="src2">
       <iframe src="iframe4.html" width="400" height="300"></iframe>
@@ -28,11 +28,11 @@
   </body>
   <script type="text/javascript">
     $(document).ready(function(e) {
-      var bug  = new Shutterbug("#src1", "#dst");
-      var bug2 = new Shutterbug("#src2", "#dst2", null, "plugh");
-      $("button.shutterbug").click(function(e) {
-        bug.getDomSnapshot();
+      var bug1 = new Shutterbug({selector: "#src1", dstSelector: "#dst1"});
+      $("button.shutterbug1").click(function(e) {
+        bug1.getDomSnapshot();
       });
+      var bug2 = new Shutterbug({selector: "#src2", dstSelector: "#dst2"});
       $("button.shutterbug2").click(function(e) {
         bug2.getDomSnapshot();
       });

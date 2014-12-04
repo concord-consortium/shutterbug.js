@@ -527,16 +527,13 @@
       </ul>
     </div>
 
-    <button id="make-svg-inlined-image" class="shutterbug" data-src="#src-svg-inlined" data-dst="#image-svg-inlined-dst">Image Snapshot</button>
+    <button id="make-svg-inlined-image" class="shutterbug">Image Snapshot</button>
     <div id="image-svg-inlined-dst"></div>
 
     <script type="text/javascript">
       $(document).ready(function(e) {
+        var bug = new Shutterbug({selector: "#src-svg-inlined", dstSelector: "#image-svg-inlined-dst"});
         $("button.shutterbug#make-svg-inlined-image").click(function(e) {
-          var target = $(e.target);
-          var src    = target.attr('data-src');
-          var dst    = target.attr('data-dst');
-          var bug    = new Shutterbug(src,dst,null,"xxyyz");
           bug.getDomSnapshot();
         });
       });
@@ -552,16 +549,13 @@
         </li>
       </ul>
     </div>
-    <button id="make-svg-embed-image" class="shutterbug" data-src="#src-svg-embed" data-dst="#image-svg-embed-dst">Image Snapshot</button>
+    <button id="make-svg-embed-image" class="shutterbug">Image Snapshot</button>
     <div id="image-svg-embed-dst"></div>
 
     <script type="text/javascript">
       $(document).ready(function(e) {
+        var bug = new Shutterbug({selector: "#src-svg-embed", dstSelector: "#image-svg-embed-dst"});
         $("button.shutterbug#make-svg-embed-image").click(function(e) {
-          var target = $(e.target);
-          var src    = target.attr('data-src');
-          var dst    = target.attr('data-dst');
-          var bug    = new Shutterbug(src,dst,null,"xxyyz");
           bug.getDomSnapshot();
         });
       });

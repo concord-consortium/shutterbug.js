@@ -3,28 +3,32 @@ var htmlTools      = require('scripts/html-tools');
 var DEFAULT_SERVER = require('scripts/default-server');
 
 var MAX_TIMEOUT = 1500;
-var BIN_DATA_SUPPORTED = typeof(window.Blob) === 'function' && typeof(window.Uint8Array) === 'function'; // IE9
+var BIN_DATA_SUPPORTED = typeof(window.Blob) === 'function' &&
+                         typeof(window.Uint8Array) === 'function'; // IE9
+
+// Each shutterbug instance on a single page requires unique ID (iframe-iframe communication).
+var _id = 0;
+function getID() {
+  return _id++;
+}
 
 // TODO: Construct using opts instead of positional arguments.
-function Shutterbug(selector, imgDst, callback, id, jQuery, opt) {
-  if (typeof(jQuery) != "undefined" && jQuery != null) {
-    $ = jQuery;
-  }
-  // If we still don't have a valid jQuery, try setting it from the global jQuery default.
-  // This can happen if shutterbug.js is included before jquery.js
-  if ((typeof($) == "undefined" || $ == null) && typeof(window.$) != "undefined" && window.$ != null) {
-    $ = window.$;
+function Shutterbug(options) {
+  var opt = options || {};
+
+  if (!opt.selector || (!opt.callback && !opt.dstSelector)) {
+    // Nothing to do, we need at least selector and either callback or destSelector.
+    return;
   }
 
-  opt = opt || {};
-
-  this.server = opt.server || DEFAULT_SERVER;
-  this.imageFormat = opt.format || 'png';
+  this.element      = opt.selector;
+  this.callback     = opt.callback;
+  this.imgDst       = opt.dstSelector;
+  this.server       = opt.server || DEFAULT_SERVER;
+  this.imageFormat  = opt.format || 'png';
   this.imageQuality = opt.quality || 1;
-  this.element = selector;
-  this.imgDst = imgDst;
-  this.callback = callback;
-  this.id = id;
+
+  this.id = getID();
   this.iframeReqTimeout = MAX_TIMEOUT;
 
   $(document).ready(function () {
