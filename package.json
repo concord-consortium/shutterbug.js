@@ -2,7 +2,7 @@
   "name": "shutterbug",
   "description": "HTML Snapshot",
   "author": "Piotr Janik <janikpiotrek@gmail.com>",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/concord-consortium/shutterbug.js"

@@ -185,7 +185,7 @@ ShutterbugWorker.prototype.directUpload = function(options) {
     processData: false,
     contentType: false
   }).done(function(data) {
-    self._successHandler('<img src=' + options.get_url + '>');
+    self._successHandler("<img src='" + options.get_url + "'>");
   }).fail(function(jqXHR, textStatus, errorThrown) {
     self._failHandler(jqXHR, textStatus, errorThrown)
   }).always(function() {
@@ -219,7 +219,7 @@ ShutterbugWorker.prototype._successHandler = function(imageTag) {
   }
   if (this.callback) {
     // Extract the url out of the returned html fragment.
-    var imgUrl = imageTag.match(/src='([^']*)'/)[1];
+    var imgUrl = imageTag.match(/src=['"]([^'"]*)['"]/)[1];
     this.callback(imgUrl);
   }
 };
