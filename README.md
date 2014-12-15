@@ -7,7 +7,7 @@ Shutterbug has two parts: a browser JavaScript library for taking html snapshots
 ## Requirements & Dependencies
 
 shutterbug.js requires [JQuery](http://jquery.com/) and expects JQuery to be found via window.jQuery.
-  
+
 ## Basic usage
 
 Include the following javascript in your pages:
@@ -17,7 +17,7 @@ Include the following javascript in your pages:
 Elsewhere in your javascript, something like this:
 
     Shutterbug.snapshot({
-      selector: '#sourceSelector', 
+      selector: '#sourceSelector',
       dstSelector: '#destinationSelector', // optional
       done: callbackFn, // optional
       fail: failCallbackFn, // optional
@@ -30,7 +30,7 @@ Elsewhere in your javascript, something like this:
 This will replace the contents of `$("#destinationSelector")` with an image tag which will magically spring into existance. `callbackFn` is an optional callback function which will be invoked with the image source. You can use either of them. Note that all the options are passed using simple object literal.
 
 There are also shortcuts available:
-    
+
     Shutterbug.snapshot('#sourceSelector', otherOptions);
     Shutterbug.snapshot('#sourceSelector', callbackFn, otherOptions);
     Shutterbug.snapshot('#sourceSelector', '#destinationSelector', otherOptions);
@@ -42,7 +42,7 @@ By itself `shutterbug.js` is useful for authors of iframe'able content. With `sh
     <script src="shutterbug.js"></script>
     <script>Shutterbug.enable('body');</script>
 
-## Advanced usage 
+## Advanced usage
 
 ### IFrame support
 
@@ -107,6 +107,17 @@ This library is built with [Brunch](http://brunch.io).
 * Demos:
     * Useful examples are available in `app/assets/demo`.
     * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
+
+## Changes ##
+
+*  December 15, 2014 – v 0.5.4
+    *  Basic snapshot method is used when S3 direct upload fails.
+
+*  December 7, 2014 – v 0.5.3
+    *  Bug fixes.
+
+*  December 4, 2014 – v 0.5.0
+    *  The first version after separation from the [server-side tool](https://github.com/concord-consortium/shutterbug).
 
 ## License ##
 

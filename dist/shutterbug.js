@@ -337,10 +337,14 @@ ShutterbugWorker.prototype.directUpload = function(options) {
     contentType: false
   }).done(function(data) {
     self._successHandler("<img src='" + options.get_url + "'>");
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    self._failHandler(jqXHR, textStatus, errorThrown)
-  }).always(function() {
+    // Note that we can't use jQuery .always() function - when request
+    // fails (see lines below) and we use basic snapshot method, it
+    // will call `always` callback. We don't want to call it twice.
     self._alwaysHandler();
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    // Use basic snapshot as a fallback.
+    // We've already encountered issues with direct upload to S3 in some schools.
+    self.basicSnapshot();
   });
 }
 
