@@ -1,6 +1,7 @@
 var ShutterbugWorker = require('scripts/shutterbug-worker');
 
 function parseSnapshotArguments(arguments) {
+  // Remember that selector is anything accepted by jQuery, it can be DOM element too.
   var selector;
   var doneCallback;
   var dstSelector;

@@ -17,7 +17,7 @@ Include the following javascript in your pages:
 Elsewhere in your javascript, something like this:
 
     Shutterbug.snapshot({
-      selector: '#sourceSelector',
+      selector: '#sourceSelector', // anything accepted by jQuery, it can be DOM element too!
       dstSelector: '#destinationSelector', // optional
       done: callbackFn, // optional
       fail: failCallbackFn, // optional

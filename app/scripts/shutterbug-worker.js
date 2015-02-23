@@ -19,6 +19,7 @@ function ShutterbugWorker(options) {
     throw new Error("missing required option: selector");
   }
 
+  // Remember that selector is anything accepted by jQuery, it can be DOM element too.
   this.element            = opt.selector;
   this.callback           = opt.done;
   this.failCallback       = opt.fail;
