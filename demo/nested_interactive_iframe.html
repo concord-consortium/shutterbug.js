@@ -19,9 +19,15 @@
       <iframe src="interactive_in_iframe.html" width="550" height="400"></iframe>
     </div>
     <button class="shutterbug1" data-dst="#dst">Snapshot</button>
-    <div id="dst1"></div>
-    <iframe id="htmldst" src="" width="500" height="400"></iframe>
-    <span id="clicktoview"></div>
+    <div id="dst1">
+      <p>Image tag with src=PNG produced by shutterbug:</p>
+    </div>
+    <div>
+      <p>Iframe with src=intermediate HTML produced by shutterbug:</p>
+      <iframe id="htmldst" src="" width="500" height="400"></iframe>
+      <br/>
+      <span id="clicktoview"></div>
+    </div>
   </body>
   <script type="text/javascript">
     $(document).ready(function(e) {
