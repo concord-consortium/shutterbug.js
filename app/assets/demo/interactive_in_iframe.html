@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+      <title>Interactive in Iframe</title>
+      <script type="text/javascript" src="../vendor.js"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <link rel="stylesheet" type="text/css" href="main.css"></link>
+      <style type="text/css">
+        #src {
+          color: navy;
+        }
+        iframe {
+          padding: 0px;
+          border: 0px;
+          margin: none;
+        }
+      </style>
+  </head>
+  <body>
+    <div id="src" class="lab-interactive-container lab-responsive-content">
+      <p>(iframe that contains an interactive:</p>
+      <iframe id="int" src="http://lab.concord.org/embeddable.html#interactives/samples/1-oil-and-water-shake.json" width="400" height="300"></iframe>
+    </div>
+  </div>
+
+  </body>
+  <script type="text/javascript">
+    Shutterbug.enable('#src');
+  </script>
+</html>
