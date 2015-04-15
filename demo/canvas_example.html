@@ -30,7 +30,14 @@
       $("button.shutterbug").click(function(e) {
         Shutterbug.snapshot("#src", "#dst", {
           format: "jpeg",
-          quality: 0.75
+          quality: 0.75,
+          done: function(src) {
+            console.log("done handler");
+            console.log(src);
+          },
+          always: function() {
+            console.log("always handler");
+          }
         });
       });
     });
