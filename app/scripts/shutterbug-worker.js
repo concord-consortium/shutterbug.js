@@ -90,7 +90,7 @@ ShutterbugWorker.prototype.getHtmlFragment = function(callback) {
     }
 
     // .addBack('canvas') handles case when the element itself is a canvas.
-    var replacementImgs = $element.find('canvas').addBack('canvas').map(function(i, elem) {
+    var replacementCanvasImgs = $element.find('canvas').addBack('canvas').map(function(i, elem) {
         // Use png here, as it supports transparency and canvas can be layered on top of other elements.
         var dataUrl = elem.toDataURL('image/png');
         var img = htmlTools.cloneDomItem($(elem), "<img>");
@@ -99,10 +99,42 @@ ShutterbugWorker.prototype.getHtmlFragment = function(callback) {
     });
 
     if (element.is('canvas')) {
-      element = replacementImgs[0];
+      element = replacementCanvasImgs[0];
     } else {
       element.find('canvas').each(function(i, elem) {
-        $(elem).replaceWith(replacementImgs[i]);
+        $(elem).replaceWith(replacementCanvasImgs[i]);
+      });
+    }
+
+    // .addBack('video') handles case when the element itself is a video.
+    var replacementVideoImgs = [];
+    $element.find('video').addBack('video').map(function(i, elem) {
+      var $elem = $(elem);
+      var canvas = htmlTools.cloneDomItem($elem, "<canvas>");
+      canvas[0].getContext('2d').drawImage(elem, 0, 0, $elem.width(), $elem.height());
+      try {
+        var dataUrl = canvas[0].toDataURL('image/png');
+      }
+      catch (e) {
+        // If the video isn't hosted on the same site this will catch the security error
+        // and push null to signal it doesn't need replacing.  We don't use the return
+        // value of map() as returning null confuses jQuery.
+        replacementVideoImgs.push(null);
+      }
+      var img = htmlTools.cloneDomItem($elem, "<img>");
+      img.attr('src', dataUrl);
+      replacementVideoImgs.push(img);
+    });
+
+    if (element.is('video')) {
+      if (replacementVideoImgs[0]) {
+        element = replacementVideoImgs[0];
+      }
+    } else {
+      element.find('video').each(function(i, elem) {
+        if (replacementVideoImgs[i]) {
+          $(elem).replaceWith(replacementVideoImgs[i]);
+        }
       });
     }
 
