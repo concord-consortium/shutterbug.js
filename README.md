@@ -98,17 +98,20 @@ This library is built with [Brunch](http://brunch.io).
     * Brunch plugins and Bower dependencies: `npm install & bower install`.
 * Run:
     * `brunch watch --server` — watches the project with continuous rebuild. This will also launch HTTP server with [pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history).
+* Build:
     * `brunch build -e dist` — builds dist files
 * Learn:
     * `public/` dir is fully auto-generated and served by HTTP server.  Write your code in `app/` dir.
     * Place static files you want to be copied from `app/assets/` to `public/`.
     * [Brunch site](http://brunch.io)
-
 * Demos:
     * Useful examples are available in `app/assets/demo`.
     * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
+
+*  Sept 10, 2015 – v 0.5.7
+    * Add support for snapshotting `<video>` elements. (@dougmartin)
 
 *  December 15, 2014 – v 0.5.4
     *  Basic snapshot method is used when S3 direct upload fails.

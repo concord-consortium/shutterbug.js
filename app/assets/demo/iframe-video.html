@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script type="text/javascript" src="../vendor.js"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <link rel="stylesheet" type="text/css" href="main.css"></link>
+      <style type="text/css">
+        #src {
+          color: navy;
+          width: 350px;
+          height: 250px;
+        }
+      </style>
+  </head>
+  <body>
+    <div id="src">
+      <p>Iframe that contains video:</p>
+      <iframe src="video.html"></iframe>
+    </div>
+
+    <button class="shutterbug5">
+      Shutterbug.snapshot({server: "//snapshotdev.concord.org/shutterbug", selector: "#src", dstSelector: "#dst"});
+    </button>
+
+    <div id="dst">
+    </div>
+  </body>
+
+
+</body>
+<script type="text/javascript">
+  $(document).ready(function(e) {
+    $("button").click(function(e) {
+      eval($(e.target).text());
+    });
+  });
+</script>
+</html>
