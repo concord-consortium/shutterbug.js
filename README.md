@@ -105,6 +105,7 @@ This library is built with [Brunch](http://brunch.io).
     * Place static files you want to be copied from `app/assets/` to `public/`.
     * [Brunch site](http://brunch.io)
 * Demos:
+    * You can see the current demos in the [github pages](http://concord-consortium.github.io/shutterbug.js/demo/)
     * Useful examples are available in `app/assets/demo`.
     * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
