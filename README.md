@@ -111,6 +111,9 @@ This library is built with [Brunch](http://brunch.io).
 
 ## Changes ##
 
+*  October 6, 2015
+    * Minor change: Video example was incorrectly specifying the development server.
+    
 *  Sept 10, 2015 – v 0.5.7
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 
