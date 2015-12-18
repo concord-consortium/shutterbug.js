@@ -110,7 +110,10 @@ This library is built with [Brunch](http://brunch.io).
     * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
-
+*  December 18, 2015
+    * Use relative paths in require() calls, so Shutterbug can work in NodeJS / NPM env.
+    * Publish Shutterbug as NPM package.
+    
 *  October 6, 2015
     * Minor change: Video example was incorrectly specifying the development server.
     
@@ -118,13 +121,13 @@ This library is built with [Brunch](http://brunch.io).
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 
 *  December 15, 2014 – v 0.5.4
-    *  Basic snapshot method is used when S3 direct upload fails.
+    * Basic snapshot method is used when S3 direct upload fails.
 
 *  December 7, 2014 – v 0.5.3
-    *  Bug fixes.
+    * Bug fixes.
 
 *  December 4, 2014 – v 0.5.0
-    *  The first version after separation from the [server-side tool](https://github.com/concord-consortium/shutterbug).
+    * The first version after separation from the [server-side tool](https://github.com/concord-consortium/shutterbug).
 
 ## License ##
 

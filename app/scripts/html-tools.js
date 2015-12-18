@@ -1,4 +1,4 @@
-var $ = jQuery;
+var $ = typeof jQuery !== 'undefined' ? jQuery : require('jquery');
 
 module.exports = {
   cloneDomItem: function($elem, elemTag) {

@@ -1,6 +1,6 @@
-var $ = jQuery;
-var htmlTools      = require('scripts/html-tools');
-var DEFAULT_SERVER = require('scripts/default-server');
+var $ = typeof jQuery !== 'undefined' ? jQuery : require('jquery');
+var htmlTools      = require('./html-tools');
+var DEFAULT_SERVER = require('./default-server');
 
 var MAX_TIMEOUT = 1500;
 var BIN_DATA_SUPPORTED = typeof(window.Blob) === 'function' &&

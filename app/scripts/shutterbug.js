@@ -1,4 +1,4 @@
-var ShutterbugWorker = require('scripts/shutterbug-worker');
+var ShutterbugWorker = require('./shutterbug-worker');
 
 function parseSnapshotArguments(arguments) {
   // Remember that selector is anything accepted by jQuery, it can be DOM element too.
