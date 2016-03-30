@@ -110,6 +110,9 @@ This library is built with [Brunch](http://brunch.io).
     * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
+*  March 30, 2016
+    * Add .on and .off methods to the Shutterbug API
+    
 *  December 18, 2015
     * Use relative paths in require() calls, so Shutterbug can work in NodeJS / NPM env.
     * Publish Shutterbug as NPM package.

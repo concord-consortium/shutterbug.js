@@ -551,6 +551,7 @@ module.exports = ShutterbugWorker;
 });
 
 require.register("scripts/shutterbug", function(exports, require, module) {
+var $ = typeof jQuery !== 'undefined' ? jQuery : require('jquery');
 var ShutterbugWorker = require('./shutterbug-worker');
 
 function parseSnapshotArguments(arguments) {
@@ -598,6 +599,17 @@ module.exports = {
     if (this._iframeWorker) {
       this._iframeWorker.disableIframeCommunication();
     }
+  },
+
+  // Supported events:
+  // 'saycheese' - triggered before snapshot is taken
+  // 'asyouwere' - triggered after snapshot is taken
+  on: function(event, handler) {
+    $(window).on('shutterbug-' + event, handler)
+  },
+
+  off: function(event, handler) {
+    $(window).off('shutterbug-' + event, handler)
   }
 };
 
