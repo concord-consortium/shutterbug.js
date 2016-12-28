@@ -134,12 +134,16 @@ module.exports = {
   },
 
   generateFullHtmlFromFragment: function(fragment) {
+    var base_url = fragment.base_url.indexOf('#') > 0 ?
+                   fragment.base_url :
+                   fragment.base_url + '#';
+
     return "<!DOCTYPE html>" +
       "<html>" +
         "<head>" +
-          "<base href='" + fragment.base_url + "'>" +
+          "<base href='" + base_url + "'>" +
           "<meta content='text/html;charset=utf-8' http-equiv='Content-Type'>" +
-          "<title>content from " + fragment.base_url + "</title>" +
+          "<title>content from " + base_url + "</title>" +
           fragment.css +
         "</head>" +
         "<body>" +
@@ -618,4 +622,3 @@ module.exports = {
 // Do not force users to call require() manually, export Shutterbug constructor.
 // See: https://github.com/brunch/brunch/issues/712
 window.Shutterbug = require('scripts/shutterbug');
-
