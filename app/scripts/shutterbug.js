@@ -1,7 +1,7 @@
 var $ = typeof jQuery !== 'undefined' ? jQuery : require('jquery');
 var ShutterbugWorker = require('./shutterbug-worker');
 
-function parseSnapshotArguments(arguments) {
+function parseSnapshotArguments(args) {
   // Remember that selector is anything accepted by jQuery, it can be DOM element too.
   var selector;
   var doneCallback;
@@ -12,15 +12,15 @@ function parseSnapshotArguments(arguments) {
     else if (typeof arg === 'function') { doneCallback = arg; }
     else if (typeof arg === 'object')   { options      = arg; }
   }
-  if (arguments.length === 3) {
-    options = arguments[2];
-    assignSecondArgument(arguments[1]);
-    selector = arguments[0];
-  } else if (arguments.length === 2) {
-    assignSecondArgument(arguments[1]);
-    selector = arguments[0];
-  } else if (arguments.length === 1) {
-    options = arguments[0];
+  if (args.length === 3) {
+    options = args[2];
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 2) {
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 1) {
+    options = args[0];
   }
   if (selector)     { options.selector    = selector; }
   if (doneCallback) { options.done        = doneCallback; }

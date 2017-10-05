@@ -182,6 +182,44 @@ function getID() {
   return _id++;
 }
 
+// Replaces a few CSS rules that are not supported by PhantomJS.
+// cssText is assumed to be CSS content only, so it's safe to replace those words.
+// Even if they are in comments, it won't affect snapshot rendering.
+// Of course transformation from translate3d to 2d version won't work in all the cases. However, translate3d
+// won't work anyway, so it won't introduce any new bugs.
+function fixCSSTransformRules(cssText) {
+  if (window.__SHUTTERBUG_NO_3D_TRANSFORM_FIX__) {
+    // This preprocessing can be disabled using global __SHUTTERBUG_NO_3D_TRANSFORM_FIX__ flag.
+    // It might be set using browser console for debugging purposes.
+    return cssText
+  }
+  return cssText
+    .replace(/transform/g, '-webkit-transform') // affects both transform and transform-origin
+    .replace(/rotateZ/g, 'rotate')
+    .replace(/(translate3d)\((.+?),(.+?),(.+?)\)/g, function (match, translate3d, x, y, z) {
+      return 'translate(' + x + ',' + y + ')'
+    })
+}
+
+// Replaces a few CSS rules that are not supported by PhantomJS.
+// htmlText is a string with DOM markup. Function will only process inline styles or styles within <style> </style> tags.
+function fixHtmlInlineTransformRules(htmlText) {
+  if (window.__SHUTTERBUG_NO_3D_TRANSFORM_FIX__) {
+    // This preprocessing can be disabled using global __SHUTTERBUG_NO_3D_TRANSFORM_FIX__ flag.
+    // It might be set using browser console for debugging purposes.
+    return htmlText
+  }
+  return htmlText
+    .replace(/(<[\s\S]*?style=['"])([\s\S]*?)(['"][\s\S]*?[<\/|>])/g, function (match, prefix, styleContent, suffix) {
+      // Select inline styles and fix them.
+      return prefix + fixCSSTransformRules(styleContent) + suffix
+    })
+    .replace(/(<style[\s\S]*?)([\s\S]*?)(<\/style)/g, function (match, prefix, styleContent, suffix) {
+      // Select <style> </style> blocks and fix them.
+      return prefix + fixCSSTransformRules(styleContent) + suffix
+    })
+}
+
 function ShutterbugWorker(options) {
   var opt = options || {};
 
@@ -323,8 +361,8 @@ ShutterbugWorker.prototype.getHtmlFragment = function(callback) {
     }
 
     var html_content = {
-      content: $('<div>').append(element).html(),
-      css: css,
+      content: fixHtmlInlineTransformRules($('<div>').append(element).html()),
+      css: fixCSSTransformRules(css),
       width: width,
       height: height,
       base_url: window.location.href
@@ -554,7 +592,7 @@ require.register("scripts/shutterbug", function(exports, require, module) {
 var $ = typeof jQuery !== 'undefined' ? jQuery : require('jquery');
 var ShutterbugWorker = require('./shutterbug-worker');
 
-function parseSnapshotArguments(arguments) {
+function parseSnapshotArguments(args) {
   // Remember that selector is anything accepted by jQuery, it can be DOM element too.
   var selector;
   var doneCallback;
@@ -565,15 +603,15 @@ function parseSnapshotArguments(arguments) {
     else if (typeof arg === 'function') { doneCallback = arg; }
     else if (typeof arg === 'object')   { options      = arg; }
   }
-  if (arguments.length === 3) {
-    options = arguments[2];
-    assignSecondArgument(arguments[1]);
-    selector = arguments[0];
-  } else if (arguments.length === 2) {
-    assignSecondArgument(arguments[1]);
-    selector = arguments[0];
-  } else if (arguments.length === 1) {
-    options = arguments[0];
+  if (args.length === 3) {
+    options = args[2];
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 2) {
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 1) {
+    options = args[0];
   }
   if (selector)     { options.selector    = selector; }
   if (doneCallback) { options.done        = doneCallback; }
