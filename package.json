@@ -2,13 +2,14 @@
   "name": "shutterbug",
   "description": "HTML Snapshot",
   "author": "Piotr Janik <janikpiotrek@gmail.com>",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "main": "app/scripts/shutterbug.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/concord-consortium/shutterbug.js"
   },
   "scripts": {
+    "build": "brunch build -e dist",
     "start": "brunch watch --server",
     "test": "brunch test"
   },
@@ -16,6 +17,7 @@
     "jquery": ">= 1.10.1"
   },
   "devDependencies": {
+    "brunch": "1.8.5",
     "javascript-brunch": ">= 1.0 < 1.8",
     "css-brunch": ">= 1.0 < 1.8",
     "uglify-js-brunch": ">= 1.0 < 1.8",
