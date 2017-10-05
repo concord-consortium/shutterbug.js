@@ -89,6 +89,8 @@ After all elements are copied, emits a `shutterbug-asyouwere` event.
 
 ## Development
 
+Node.js v0.10 might be required. Please use NVM. In the future, build system should be switched to webpack. 
+
 This library is built with [Brunch](http://brunch.io).
 
 * Install (if you don't have them):
@@ -97,9 +99,9 @@ This library is built with [Brunch](http://brunch.io).
     * [Bower](http://bower.io): `npm install -g bower`
     * Brunch plugins and Bower dependencies: `npm install & bower install`.
 * Run:
-    * `brunch watch --server` — watches the project with continuous rebuild. This will also launch HTTP server with [pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history).
+    * `npm run start` — watches the project with continuous rebuild. This will also launch HTTP server with [pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history).
 * Build:
-    * `brunch build -e dist` — builds dist files
+    * `npm run build` — builds dist files
 * Learn:
     * `public/` dir is fully auto-generated and served by HTTP server.  Write your code in `app/` dir.
     * Place static files you want to be copied from `app/assets/` to `public/`.
