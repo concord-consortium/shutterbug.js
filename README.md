@@ -27,7 +27,7 @@ Elsewhere in your javascript, something like this:
       quality: 0.85 // optional, default: 1
     });
 
-This will replace the contents of `$("#destinationSelector")` with an image tag which will magically spring into existance. `callbackFn` is an optional callback function which will be invoked with the image source. You can use either of them. Note that all the options are passed using simple object literal.
+This will replace the contents of `$("#destinationSelector")` with an image tag which will magically spring into existence. `callbackFn` is an optional callback function which will be invoked with the image source. You can use either of them. Note that all the options are passed using simple object literal.
 
 There are also shortcuts available:
 
@@ -89,25 +89,37 @@ After all elements are copied, emits a `shutterbug-asyouwere` event.
 
 ## Development
 
-This library is built with [Brunch](http://brunch.io).
+First, you need to make sure that webpack is installed and all the NPM packages required by this project are available:
 
-* Install (if you don't have them):
-    * [Node.js](http://nodejs.org): `brew install node` on OS X
-    * [Brunch](http://brunch.io): `npm install -g brunch`
-    * [Bower](http://bower.io): `npm install -g bower`
-    * Brunch plugins and Bower dependencies: `npm install & bower install`.
-* Run:
-    * `brunch watch --server` — watches the project with continuous rebuild. This will also launch HTTP server with [pushState](https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history).
-* Build:
-    * `brunch build -e dist` — builds dist files
-* Learn:
-    * `public/` dir is fully auto-generated and served by HTTP server.  Write your code in `app/` dir.
-    * Place static files you want to be copied from `app/assets/` to `public/`.
-    * [Brunch site](http://brunch.io)
+```
+npm install
+```
+Then you can build the project files using:
+```
+npm run build
+```
+or start webpack dev server:
+```
+npm run server 
+```
+and open [http://localhost:8080/demo](http://localhost:8080/demo).
+
+### Code style
+
+This project uses StandardJS style: https://standardjs.com
+
+Before committing your changes should run:
+```
+npm run lint 
+```
+and check if there are some errors. Most of them will be fixed automatically since we use `--fix` flag.
+Also, `js/peels` directory is ignored as it's based on the external codebase and keeping it similar
+to the original code might be useful in the future.
+
 * Demos:
     * You can see the current demos in the [github pages](http://concord-consortium.github.io/shutterbug.js/demo/)
-    * Useful examples are available in `app/assets/demo`.
-    * They use default Shutterbug server which is specified in `app/scripts/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
+    * Useful examples are available in `public/demo`.
+    * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
 *  March 30, 2016
@@ -134,8 +146,4 @@ This library is built with [Brunch](http://brunch.io).
 
 ## License ##
 
-* [Simplified BSD](http://www.opensource.org/licenses/BSD-2-Clause),
-* [MIT](http://www.opensource.org/licenses/MIT), or
-* [Apache 2.0](http://www.opensource.org/licenses/Apache-2.0).
-
-See [LICENSE.md](LICENSE.md) for more information.
+[MIT](http://www.opensource.org/licenses/MIT)

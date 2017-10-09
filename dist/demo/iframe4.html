@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <style type="text/css">
+        #src {
+          color: navy;
+          width: 350px;
+          height: 250px;
+        }
+      </style>
+  </head>
+  <body>
+    <div id="src">
+      <p>(iframe that contains other iframes, but not all of them support Shutterbug)</p>
+      <iframe src="iframe.html" width="140" height="140"></iframe>
+      <iframe src="iframe-no-shutterbug.html" width="180" height="140"></iframe>
+    </div>
+  </div>
+  </body>
+  <script type="text/javascript">
+    Shutterbug.enable('#src');
+  </script>
+</html>
