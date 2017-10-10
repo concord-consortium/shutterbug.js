@@ -32,34 +32,35 @@ function parseSnapshotArguments (args) {
 }
 
 // Public API:
+export default {
+  snapshot () {
+    const options = parseSnapshotArguments(arguments)
+    const shutterbugWorker = new ShutterbugWorker(options)
+    shutterbugWorker.getDomSnapshot()
+  },
 
-export function snapshot () {
-  const options = parseSnapshotArguments(arguments)
-  const shutterbugWorker = new ShutterbugWorker(options)
-  shutterbugWorker.getDomSnapshot()
-}
+  enable (selector) {
+    this.disable()
+    selector = selector || 'body'
+    iframeWorker = new ShutterbugWorker({selector: selector})
+    iframeWorker.enableIframeCommunication()
+  },
 
-export function enable (selector) {
-  this.disable()
-  selector = selector || 'body'
-  iframeWorker = new ShutterbugWorker({selector: selector})
-  iframeWorker.enableIframeCommunication()
-}
+  disable () {
+    if (iframeWorker) {
+      iframeWorker.disableIframeCommunication()
+      iframeWorker = null
+    }
+  },
 
-export function disable () {
-  if (iframeWorker) {
-    iframeWorker.disableIframeCommunication()
-    iframeWorker = null
+  // Supported events:
+  // 'saycheese' - triggered before snapshot is taken
+  // 'asyouwere' - triggered after snapshot is taken
+  on (event, handler) {
+    $(window).on('shutterbug-' + event, handler)
+  },
+
+  off (event, handler) {
+    $(window).off('shutterbug-' + event, handler)
   }
-}
-
-// Supported events:
-// 'saycheese' - triggered before snapshot is taken
-// 'asyouwere' - triggered after snapshot is taken
-export function on (event, handler) {
-  $(window).on('shutterbug-' + event, handler)
-}
-
-export function off (event, handler) {
-  $(window).off('shutterbug-' + event, handler)
 }

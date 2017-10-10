@@ -1,10 +1,10 @@
 #!/bin/sh
 
-echo "- running brunch build -e production"
+echo "- running npm run build"
 rm -rf dist
 npm run build
 
-echo "- cloning drawing-tool repo into temporary dir"
+echo "- cloning shutterbug.js repo into temporary dir"
 git clone git@github.com:concord-consortium/shutterbug.js.git --branch gh-pages __gh-pages-tmp__
 
 echo "- copying /dist content into temporary dir"

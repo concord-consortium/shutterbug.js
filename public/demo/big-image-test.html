@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <style type="text/css">
+        body {
+          font-family: Verdana, Arial, sans-serif;
+          padding: 0 10px;
+        }
+        div, img, button {
+          margin-bottom: 10px;
+        }
+        button {
+          display: block;
+          font-size: 20px;
+        }
+        #src {
+          display: inline-block;
+          border: 2px solid #b4130c;
+          padding: 10px;
+          width: 700px;
+        }
+        #dst {
+          display: inline-block;
+          border: 2px solid #3f16b4;
+          padding: 3px;
+        }
+      </style>
+  </head>
+
+  <body>
+    <div>
+      <p> 5MB Photograph By Adumbvoget (Own work) [Public domain], via Wikimedia Commons
+        <a href="http://http://commons.wikimedia.org/wiki/File:Snake_River_(5mb).jpg"> WikiMedia Commons </a>
+      </p>
+      <img src="http://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg" id="src"/>
+      <button id="shutterbug">Shutterbug.snapshot({selector: "#src", dstSelector: "#dst"});</button>
+    </div>
+  <div id="dst">Destination container</div>
+
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      $("#shutterbug").click(function(e) {
+        eval($(e.target).text());
+      });
+    });
+  </script>
+</html>

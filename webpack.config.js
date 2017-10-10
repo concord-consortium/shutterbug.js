@@ -10,8 +10,13 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
     libraryTarget: 'umd',
-    // name of the global var: "Shutterbug"
-    library: 'Shutterbug'
+    libraryExport: 'default',
+    library: {
+      // name of the global var: "Shutterbug"
+      root: 'Shutterbug',
+      amd: 'shutterbug',
+      commonjs: 'shutterbug'
+    }
   },
   module: {
     loaders: [

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <style type="text/css">
+        #src {
+          color: navy;
+          width: 350px;
+          height: 250px;
+        }
+      </style>
+  </head>
+  <body>
+    <div id="src">
+      <p>(iframe that contains video)</p>
+      <video controls="">
+        <source src="apple.ogg" type="video/ogg">
+        Your browser does not support HTML5 video.
+      </video>
+    </div>
+  </body>
+  <script type="text/javascript">
+    Shutterbug.enable('#src');
+  </script>
+</html>

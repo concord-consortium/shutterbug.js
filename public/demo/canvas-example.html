@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, button {
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        font-size: 20px;
+      }
+      #src {
+        display: inline-block;
+        border: 2px solid #b4130c;
+        padding: 10px;
+      }
+      #dst {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <canvas id="src" width="350" height="350"></canvas>
+    </div>
+    <button id="shutterbug">Snapshot</button>
+    <div id="dst">Destination container</div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      var img = new Image();
+      img.onload = function () {
+        var ctx = $("canvas")[0].getContext("2d");
+        ctx.fillStyle = "green";
+        ctx.fillRect(0, 0, 350, 350);
+        ctx.fillStyle = "orange";
+        ctx.fillRect(10, 10, 330, 330);
+        ctx.drawImage(img, 20, 20, 310, 310);
+      };
+      img.src = "The_Scream.jpg";
+
+      $("#shutterbug").click(function(e) {
+        Shutterbug.snapshot("#src", "#dst", {
+          done: function(src) {
+            console.log("done handler");
+            console.log(src);
+          },
+          always: function() {
+            console.log("always handler");
+          }
+        });
+      });
+    });
+  </script>
+</html>

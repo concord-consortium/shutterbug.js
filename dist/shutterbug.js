@@ -4,7 +4,7 @@
 	else if(typeof define === 'function' && define.amd)
 		define(["jquery"], factory);
 	else if(typeof exports === 'object')
-		exports["Shutterbug"] = factory(require("jquery"));
+		exports["shutterbug"] = factory(require("jquery"));
 	else
 		root["Shutterbug"] = factory(root["jQuery"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_0__) {
@@ -404,11 +404,6 @@ class shutterbug_worker_ShutterbugWorker {
   }
 }
 // CONCATENATED MODULE: ./js/index.js
-/* harmony export (immutable) */ __webpack_exports__["snapshot"] = snapshot;
-/* harmony export (immutable) */ __webpack_exports__["enable"] = enable;
-/* harmony export (immutable) */ __webpack_exports__["disable"] = disable;
-/* harmony export (immutable) */ __webpack_exports__["on"] = on;
-/* harmony export (immutable) */ __webpack_exports__["off"] = off;
 
 
 
@@ -455,38 +450,39 @@ function parseSnapshotArguments(args) {
 }
 
 // Public API:
+/* harmony default export */ var js = __webpack_exports__["default"] = ({
+  snapshot() {
+    const options = parseSnapshotArguments(arguments);
+    const shutterbugWorker = new shutterbug_worker_ShutterbugWorker(options);
+    shutterbugWorker.getDomSnapshot();
+  },
 
-function snapshot() {
-  const options = parseSnapshotArguments(arguments);
-  const shutterbugWorker = new shutterbug_worker_ShutterbugWorker(options);
-  shutterbugWorker.getDomSnapshot();
-}
+  enable(selector) {
+    this.disable();
+    selector = selector || 'body';
+    iframeWorker = new shutterbug_worker_ShutterbugWorker({ selector: selector });
+    iframeWorker.enableIframeCommunication();
+  },
 
-function enable(selector) {
-  this.disable();
-  selector = selector || 'body';
-  iframeWorker = new shutterbug_worker_ShutterbugWorker({ selector: selector });
-  iframeWorker.enableIframeCommunication();
-}
+  disable() {
+    if (iframeWorker) {
+      iframeWorker.disableIframeCommunication();
+      iframeWorker = null;
+    }
+  },
 
-function disable() {
-  if (iframeWorker) {
-    iframeWorker.disableIframeCommunication();
-    iframeWorker = null;
+  // Supported events:
+  // 'saycheese' - triggered before snapshot is taken
+  // 'asyouwere' - triggered after snapshot is taken
+  on(event, handler) {
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).on('shutterbug-' + event, handler);
+  },
+
+  off(event, handler) {
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).off('shutterbug-' + event, handler);
   }
-}
-
-// Supported events:
-// 'saycheese' - triggered before snapshot is taken
-// 'asyouwere' - triggered after snapshot is taken
-function on(event, handler) {
-  external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).on('shutterbug-' + event, handler);
-}
-
-function off(event, handler) {
-  external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).off('shutterbug-' + event, handler);
-}
+});
 
 /***/ })
-/******/ ]);
+/******/ ])["default"];
 });

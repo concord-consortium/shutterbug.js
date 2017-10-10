@@ -2,7 +2,7 @@
   "name": "shutterbug",
   "description": "HTML Snapshot",
   "author": "Piotr Janik <janikpiotrek@gmail.com>",
-  "version": "1.0.0-pre.1",
+  "version": "1.0.0-pre.2",
   "main": "dist/shutterbug.js",
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "babel-preset-env": "^1.6.0",
     "copy-webpack-plugin": "^4.1.0",
     "standard": "^10.0.3",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
   }
 }
