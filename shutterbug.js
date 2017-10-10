@@ -1,1 +1,488 @@
-!function(){"use strict";var t="undefined"!=typeof window?window:global;if("function"!=typeof t.require){var e={},i={},r=function(t,e){return{}.hasOwnProperty.call(t,e)},a=function(t,e){var i,r,a=[];i=/^\.\.?(\/|$)/.test(e)?[t,e].join("/").split("/"):e.split("/");for(var n=0,s=i.length;s>n;n++)r=i[n],".."===r?a.pop():"."!==r&&""!==r&&a.push(r);return a.join("/")},n=function(t){return t.split("/").slice(0,-1).join("/")},s=function(e){return function(i){var r=n(e),s=a(r,i);return t.require(s,e)}},o=function(t,e){var r={id:t,exports:{}};return i[t]=r,e(r.exports,s(t),r),r.exports},l=function(t,n){var s=a(t,".");if(null==n&&(n="/"),r(i,s))return i[s].exports;if(r(e,s))return o(s,e[s]);var l=a(s,"./index");if(r(i,l))return i[l].exports;if(r(e,l))return o(l,e[l]);throw new Error('Cannot find module "'+t+'" from "'+n+'"')},u=function(t,i){if("object"==typeof t)for(var a in t)r(t,a)&&(e[a]=t[a]);else e[t]=i},c=function(){var t=[];for(var i in e)r(e,i)&&t.push(i);return t};t.require=l,t.require.define=u,t.require.register=u,t.require.list=c,t.require.brunch=!0}}(),require.register("scripts/default-server",function(t,e,i){i.exports="//snapshot.concord.org/shutterbug"}),require.register("scripts/html-tools",function(t,e,i){var r=jQuery;i.exports={cloneDomItem:function(t,e){var i=r(e);return i.addClass(t.attr("class")),i.attr("style",t.attr("style")),i.css("background",t.css("background")),i.attr("width",t.width()),i.attr("height",t.height()),i},generateFullHtmlFromFragment:function(t){return"<!DOCTYPE html><html><head><base href='"+t.base_url+"'><meta content='text/html;charset=utf-8' http-equiv='Content-Type'><title>content from "+t.base_url+"</title>"+t.css+"</head><body>"+t.content+"</body></html>"},dataURLtoBlob:function(t){if(-1===t.split(",")[0].indexOf("base64"))throw new Error("expected base64 data");for(var e=atob(t.split(",")[1]),i=t.split(",")[0].split(":")[1].split(";")[0],r=new Uint8Array(e.length),a=0;a<e.length;a++)r[a]=e.charCodeAt(a);return new Blob([r],{type:i})}}}),require.register("scripts/shutterbug-worker",function(t,e,i){function r(){return c++}function a(t){var e=t||{};if(!e.selector)throw new Error("missing required option: selector");this.element=e.selector,this.callback=e.done,this.failCallback=e.fail,this.alwaysCallback=e.always,this.imgDst=e.dstSelector,this.server=e.server||o,this.imageFormat=e.format||"png",this.imageQuality=e.quality||1,this._useIframeSizeHack=e.useIframeSizeHack,this.id=r(),this.iframeReqTimeout=l,this._postMessageHandler=this._postMessageHandler.bind(this)}var n=jQuery,s=e("scripts/html-tools"),o=e("scripts/default-server"),l=1500,u="function"==typeof window.Blob&&"function"==typeof window.Uint8Array,c=0;a.prototype.enableIframeCommunication=function(){n(document).ready(function(){window.addEventListener("message",this._postMessageHandler,!1)}.bind(this))},a.prototype.disableIframeCommunication=function(){window.removeEventListener("message",this._postMessageHandler,!1)},a.prototype.getHtmlFragment=function(t){var e=this,i=n(this.element),r=i.find("iframe").addBack("iframe");this._iframeContentRequests=[],r.each(function(t,i){e._postHtmlFragRequestToIframe(i,t)}),n.when.apply(n,this._iframeContentRequests).done(function(){i.trigger("shutterbug-saycheese");var r=n("<div>").append(n('link[rel="stylesheet"]').clone()).append(n("style").clone()).html(),a=i.width(),o=i.height(),l=i.clone();if(l.find("script").remove(),arguments.length>0){var u=arguments;l.find("iframe").addBack("iframe").each(function(t,e){null!=u[t]&&n(e).attr("src","data:text/html,"+s.generateFullHtmlFromFragment(u[t]))})}var c=i.find("canvas").addBack("canvas").map(function(t,e){var i=e.toDataURL("image/png"),r=s.cloneDomItem(n(e),"<img>");return r.attr("src",i),r});l.is("canvas")?l=c[0]:l.find("canvas").each(function(t,e){n(e).replaceWith(c[t])});var h=[];i.find("video").addBack("video").map(function(t,e){var i=n(e),r=s.cloneDomItem(i,"<canvas>");r[0].getContext("2d").drawImage(e,0,0,i.width(),i.height());try{var a=r[0].toDataURL("image/png")}catch(o){h.push(null)}var l=s.cloneDomItem(i,"<img>");l.attr("src",a),h.push(l)}),l.is("video")?h[0]&&(l=h[0]):l.find("video").each(function(t,e){h[t]&&n(e).replaceWith(h[t])}),l.css({top:0,left:0,margin:0,width:a,height:o}),e._useIframeSizeHack&&(a=10);var m={content:n("<div>").append(l).html(),css:r,width:a,height:o,base_url:window.location.href};i.trigger("shutterbug-asyouwere"),t(m)})},a.prototype.getDomSnapshot=function(){this.enableIframeCommunication();var t=this,e=0,i=n("<span>");i.html(e),n(t.imgDst).html("creating snapshot: ").append(i),this.timer=setInterval(function(){e+=1,i.html(e)},1e3);var r=n(this.element).prop("tagName");switch(r){case"CANVAS":this.canvasSnapshot();break;default:this.basicSnapshot()}},a.prototype.canvasSnapshot=function(){if(!u)return this.basicSnapshot();var t=this;n.ajax({type:"GET",url:this.server+"/img_upload_url?format="+this.imageFormat}).done(function(e){t.directUpload(e)}).fail(function(){t.basicSnapshot()})},a.prototype.directUpload=function(t){var e=n(this.element),i=e[0].toDataURL("image/"+this.imageFormat,this.imageQuality),r=s.dataURLtoBlob(i),a=this;n.ajax({type:"PUT",url:t.put_url,data:r,processData:!1,contentType:!1}).done(function(){a._successHandler("<img src='"+t.get_url+"'>"),a._alwaysHandler()}).fail(function(){a.basicSnapshot()})},a.prototype.basicSnapshot=function(){var t=this;this.getHtmlFragment(function(e){e.format=t.imageFormat,e.quality=t.imageQuality,n.ajax({url:t.server+"/make_snapshot",type:"POST",data:e}).done(function(e){t._successHandler(e)}).fail(function(e,i,r){t._failHandler(e,i,r)}).always(function(){t._alwaysHandler()})})},a.prototype._successHandler=function(t){if(this.imgDst&&n(this.imgDst).html(t),this.callback){var e=t.match(/src=['"]([^'"]*)['"]/)[1];this.callback(e)}},a.prototype._failHandler=function(t,e,i){this.imgDst&&n(this.imgDst).html("snapshot failed"),this.failCallback&&this.failCallback(t,e,i)},a.prototype._alwaysHandler=function(){clearInterval(this.timer),this.disableIframeCommunication(),this.alwaysCallback&&this.alwaysCallback()},a.prototype.htmlSnap=function(){this.getHtmlFragment(function(t){var e=btoa(s.generateFullHtmlFromFragment(t));window.open("data:text/html;base64,"+e)})},a.prototype.imageSnap=function(){var t=this.imgDst,e=this.callback,i=this;this.imgDst=null,this.callback=function(r){window.open(r),i.imgDst=t,i.callback=e},this.getDomSnapshot()},a.prototype._postMessageHandler=function(t){function e(t,e,i){var r=t.data;if("string"==typeof r)try{r=JSON.parse(r),r.type===e&&i(r,t.source)}catch(a){}}e(t,"htmlFragRequest",this._htmlFragRequestHandler.bind(this)),e(t,"htmlFragResponse",this._htmlFragResponseHandler.bind(this))},a.prototype._htmlFragRequestHandler=function(t,e){this.iframeReqTimeout=null!=t.iframeReqTimeout?t.iframeReqTimeout:l,this.getHtmlFragment(function(i){var r={type:"htmlFragResponse",value:i,iframeReqId:t.iframeReqId,id:t.id};e.postMessage(JSON.stringify(r),"*")})},a.prototype._htmlFragResponseHandler=function(t){if(t.id===this.id){var e=null!=t.iframeReqId?t.iframeReqId:0;this._iframeContentRequests[e].resolve(t.value)}},a.prototype._postHtmlFragRequestToIframe=function(t,e){var i={type:"htmlFragRequest",id:this.id,iframeReqId:e,iframeReqTimeout:.6*this.iframeReqTimeout};t.contentWindow.postMessage(JSON.stringify(i),"*");var r=new n.Deferred;this._iframeContentRequests[e]=r,setTimeout(function(){"resolved"!==r.state()&&r.resolve(null)},this.iframeReqTimeout)},i.exports=a}),require.register("scripts/shutterbug",function(t,e,i){function r(t){function e(t){"string"==typeof t?a=t:"function"==typeof t?r=t:"object"==typeof t&&(n=t)}var i,r,a,n={};return 3===t.length?(n=t[2],e(t[1]),i=t[0]):2===t.length?(e(t[1]),i=t[0]):1===t.length&&(n=t[0]),i&&(n.selector=i),r&&(n.done=r),a&&(n.dstSelector=a),n}var a=e("scripts/shutterbug-worker");i.exports={snapshot:function(){var t=r(arguments),e=new a(t);e.getDomSnapshot()},enable:function(t){this.disable(),t=t||"body",this._iframeWorker=new a({selector:t}),this._iframeWorker.enableIframeCommunication()},disable:function(){this._iframeWorker&&this._iframeWorker.disableIframeCommunication()}}}),window.Shutterbug=require("scripts/shutterbug");
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("jquery"));
+	else if(typeof define === 'function' && define.amd)
+		define(["jquery"], factory);
+	else if(typeof exports === 'object')
+		exports["shutterbug"] = factory(require("jquery"));
+	else
+		root["Shutterbug"] = factory(root["jQuery"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__) {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+
+// EXTERNAL MODULE: external {"root":"jQuery","commonjs2":"jquery","commonjs":"jquery","amd":"jquery"}
+var external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery__ = __webpack_require__(0);
+var external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default = /*#__PURE__*/__webpack_require__.n(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery__);
+
+// CONCATENATED MODULE: ./js/html-tools.js
+
+
+function cloneDomItem($elem, elemTag) {
+  const $returnElm = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elemTag);
+  $returnElm.addClass($elem.attr('class'));
+  $returnElm.attr('id', $elem.attr('id'));
+  $returnElm.attr('style', $elem.attr('style'));
+  $returnElm.css('background', $elem.css('background'));
+  $returnElm.attr('width', $elem.width());
+  $returnElm.attr('height', $elem.height());
+  return $returnElm;
+}
+
+function generateFullHtmlFromFragment(fragment) {
+  return `
+    <!DOCTYPE html> 
+    <html> 
+    <head> 
+      <base href="${fragment.base_url}"> 
+      <meta content="text/html;charset=utf-8" http-equiv="Content-Type"> 
+      <title>content from ${fragment.base_url}</title> 
+      ${fragment.css} 
+    </head> 
+      <body> 
+        ${fragment.content} 
+      </body> 
+    </html>
+   `;
+}
+// CONCATENATED MODULE: ./js/default-server.js
+const DEFAULT_SERVER = 'https://fh1fzvhx93.execute-api.us-east-1.amazonaws.com/production';
+// To work with local Shutterbug server use:
+// const DEFAULT_SERVER = 'http://localhost:3000'
+/* harmony default export */ var default_server = (DEFAULT_SERVER);
+// CONCATENATED MODULE: ./js/shutterbug-worker.js
+
+
+
+
+const MAX_TIMEOUT = 1500;
+
+// Each shutterbug instance on a single page requires unique ID (iframe-iframe communication).
+let _id = 0;
+
+function getID() {
+  return _id++;
+}
+
+class shutterbug_worker_ShutterbugWorker {
+  constructor(options) {
+    const opt = options || {};
+
+    if (!opt.selector) {
+      throw new Error('missing required option: selector');
+    }
+
+    // Remember that selector is anything accepted by jQuery, it can be DOM element too.
+    this.element = opt.selector;
+    this.callback = opt.done;
+    this.failCallback = opt.fail;
+    this.alwaysCallback = opt.always;
+    this.imgDst = opt.dstSelector;
+    this.server = opt.server || default_server;
+
+    this.id = getID();
+    this.iframeReqTimeout = MAX_TIMEOUT;
+
+    // Bind and save a new function, so it works well with .add/removeEventListener().
+    this._postMessageHandler = this._postMessageHandler.bind(this);
+  }
+
+  enableIframeCommunication() {
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(document).ready(() => {
+      window.addEventListener('message', this._postMessageHandler, false);
+    });
+  }
+
+  disableIframeCommunication() {
+    window.removeEventListener('message', this._postMessageHandler, false);
+  }
+
+  getDomSnapshot() {
+    this.enableIframeCommunication(); // !!!
+    let timerID = null;
+    if (this.imgDst) {
+      // Start timer and update destination element.
+      let time = 0;
+      const counter = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()('<span>');
+      counter.html(time);
+      external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(this.imgDst).html('Creating snapshot: ').append(counter);
+      timerID = setInterval(() => {
+        time = time + 1;
+        counter.html(time);
+      }, 1000);
+    }
+    // Ask for HTML fragment and render it on server.
+    this.getHtmlFragment(htmlData => {
+      external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default.a.ajax({
+        url: this.server + '/make-snapshot',
+        type: 'POST',
+        data: JSON.stringify(htmlData)
+      }).done(msg => {
+        if (this.callback) {
+          this.callback(msg.url);
+        }
+        if (this.imgDst) {
+          external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(this.imgDst).html(`<img src=${msg.url}>`);
+        }
+      }).fail((jqXHR, textStatus, errorThrown) => {
+        if (this.failCallback) {
+          this.failCallback(jqXHR, textStatus, errorThrown);
+        }
+        if (this.imgDst) {
+          external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(this.imgDst).html(`Snapshot failed`);
+        }
+        console.error(textStatus, errorThrown);
+      }).always(() => {
+        clearInterval(timerID);
+        this.disableIframeCommunication(); // !!!
+        if (this.alwaysCallback) {
+          this.alwaysCallback();
+        }
+      });
+    });
+  }
+
+  // Most important method. Returns HTML, CSS and dimensions of the snapshot.
+  getHtmlFragment(callback) {
+    const $element = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(this.element);
+
+    // .find('iframe').addBack("iframe") handles two cases:
+    // - element itself is an iframe - .addBack('iframe')
+    // - element descendants are iframes - .find('iframe')
+    const $iframes = $element.find('iframe').addBack('iframe');
+    this._iframeContentRequests = [];
+    $iframes.each((i, iframeElem) => {
+      // Note that position of the iframe is used as its ID.
+      this._postHtmlFragRequestToIframe(iframeElem, i);
+    });
+
+    // Continue when we receive responses from all the nested iframes.
+    // Nested iframes descriptions will be provided as arguments.
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default.a.when.apply(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default.a, this._iframeContentRequests).done(function () {
+      $element.trigger('shutterbug-saycheese');
+
+      let clonedElement = $element.clone();
+
+      // remove all script elements from the clone we don't want the html fragment
+      // changing itself
+      clonedElement.find('script').remove();
+
+      // Nested iframes.
+      if (arguments.length > 0) {
+        const nestedIFrames = arguments;
+        // This supports two cases:
+        // - clonedElement itself is an iframe - .addBack('iframe')
+        // - clonedElement descendants are iframes - .find('iframe')
+        clonedElement.find('iframe').addBack('iframe').each(function (i, iframeElem) {
+          // When iframe doesn't support Shutterbug, request will timeout and null will be received.
+          // In such case just ignore this iframe, we won't be able to render it.
+          if (nestedIFrames[i] == null) return;
+          external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(iframeElem).attr('src', 'data:text/html,' + generateFullHtmlFromFragment(nestedIFrames[i]));
+        });
+      }
+
+      // Canvases.
+      // .addBack('canvas') handles case when the clonedElement itself is a canvas.
+      const replacementCanvasImgs = $element.find('canvas').addBack('canvas').map(function (i, elem) {
+        // Use png here, as it supports transparency and canvas can be layered on top of other elements.
+        const dataUrl = elem.toDataURL('image/png');
+        const img = cloneDomItem(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elem), '<img>');
+        img.attr('src', dataUrl);
+        return img;
+      });
+
+      if (clonedElement.is('canvas')) {
+        clonedElement = replacementCanvasImgs[0];
+      } else {
+        clonedElement.find('canvas').each((i, elem) => {
+          external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elem).replaceWith(replacementCanvasImgs[i]);
+        });
+      }
+
+      // Video elements.
+      // .addBack('video') handles case when the clonedElement itself is a video.
+      const replacementVideoImgs = [];
+      $element.find('video').addBack('video').map((i, elem) => {
+        const $elem = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elem);
+        const canvas = cloneDomItem($elem, '<canvas>');
+        canvas[0].getContext('2d').drawImage(elem, 0, 0, $elem.width(), $elem.height());
+        try {
+          const dataUrl = canvas[0].toDataURL('image/png');
+          const img = cloneDomItem($elem, '<img>');
+          img.attr('src', dataUrl);
+          replacementVideoImgs.push(img);
+        } catch (e) {
+          // If the video isn't hosted on the same site this will catch the security error
+          // and push null to signal it doesn't need replacing.  We don't use the return
+          // value of map() as returning null confuses jQuery.
+          replacementVideoImgs.push(null);
+        }
+      });
+
+      if (clonedElement.is('video')) {
+        if (replacementVideoImgs[0]) {
+          clonedElement = replacementVideoImgs[0];
+        }
+      } else {
+        clonedElement.find('video').each(function (i, elem) {
+          if (replacementVideoImgs[i]) {
+            external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elem).replaceWith(replacementVideoImgs[i]);
+          }
+        });
+      }
+
+      clonedElement.css({
+        // Make sure that clonedElement will be positioned in the top-left corner of the viewport.
+        'top': 0,
+        'left': 0,
+        'transform': 'translate3d(0, 0, 0)',
+        'margin': 0,
+        // Dimensions need to be set explicitly (e.g. otherwise 50% width wouldn't work as expected).
+        'width': $element.width(),
+        'height': $element.height()
+      });
+
+      const htmlData = {
+        content: external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()('<div>').append(clonedElement).html(),
+        css: external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()('<div>').append(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()('link[rel="stylesheet"]').clone()).append(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()('style').clone()).html(),
+        width: $element.outerWidth(),
+        height: $element.outerHeight(),
+        base_url: window.location.href
+      };
+
+      $element.trigger('shutterbug-asyouwere');
+
+      callback(htmlData);
+    });
+  }
+
+  // frame-iframe communication related methods:
+
+  // Basic post message handler.
+  _postMessageHandler(message) {
+    function handleMessage(message, type, handler) {
+      let data = message.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+          if (data.type === type) {
+            handler(data, message.source);
+          }
+        } catch (e) {
+          // Not a json message. Ignore it. We only speak json.
+        }
+      }
+    }
+
+    handleMessage(message, 'htmlFragRequest', this._htmlFragRequestHandler.bind(this));
+    handleMessage(message, 'htmlFragResponse', this._htmlFragResponseHandler.bind(this));
+  }
+
+  // Iframe receives question about its content.
+  _htmlFragRequestHandler(data, source) {
+    // Update timeout. When we receive a request from parent, we have to finish nested iframes
+    // rendering in that time. Otherwise parent rendering will timeout.
+    // Backward compatibility: Shutterbug v0.1.x don't send iframeReqTimeout.
+    this.iframeReqTimeout = data.iframeReqTimeout != null ? data.iframeReqTimeout : MAX_TIMEOUT;
+    this.getHtmlFragment(function (html) {
+      const response = {
+        type: 'htmlFragResponse',
+        value: html,
+        iframeReqId: data.iframeReqId,
+        id: data.id // return to sender only
+      };
+      source.postMessage(JSON.stringify(response), '*');
+    });
+  }
+
+  // Parent receives content from iframes.
+  _htmlFragResponseHandler(data) {
+    if (data.id === this.id) {
+      // Backward compatibility: Shutterbug v0.1.x don't send iframeReqId.
+      const iframeReqId = data.iframeReqId != null ? data.iframeReqId : 0;
+      this._iframeContentRequests[iframeReqId].resolve(data.value);
+    }
+  }
+
+  // Parent asks iframes about their content.
+  _postHtmlFragRequestToIframe(iframeElem, iframeId) {
+    const message = {
+      type: 'htmlFragRequest',
+      id: this.id,
+      iframeReqId: iframeId,
+      // We have to provide smaller timeout while sending message to nested iframes.
+      // Otherwise, when one of the nested iframes timeouts, then all will do the
+      // same and we won't render anything - even iframes that support Shutterbug.
+      iframeReqTimeout: this.iframeReqTimeout * 0.6
+    };
+    iframeElem.contentWindow.postMessage(JSON.stringify(message), '*');
+    const requestDeferred = new external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default.a.Deferred();
+    this._iframeContentRequests[iframeId] = requestDeferred;
+    setTimeout(function () {
+      // It handles a situation in which iframe doesn't support Shutterbug.
+      // When we doesn't receive answer for some time, assume that we can't
+      // render this particular iframe (provide null as iframe description).
+      if (requestDeferred.state() !== 'resolved') {
+        requestDeferred.resolve(null);
+      }
+    }, this.iframeReqTimeout);
+  }
+}
+// CONCATENATED MODULE: ./js/index.js
+
+
+
+// Used by enable and disable functions.
+let iframeWorker = null;
+
+function parseSnapshotArguments(args) {
+  // Remember that selector is anything accepted by jQuery, it can be DOM element too.
+  let selector;
+  let doneCallback;
+  let dstSelector;
+  let options = {};
+
+  function assignSecondArgument(arg) {
+    if (typeof arg === 'string') {
+      dstSelector = arg;
+    } else if (typeof arg === 'function') {
+      doneCallback = arg;
+    } else if (typeof arg === 'object') {
+      options = arg;
+    }
+  }
+
+  if (args.length === 3) {
+    options = args[2];
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 2) {
+    assignSecondArgument(args[1]);
+    selector = args[0];
+  } else if (args.length === 1) {
+    options = args[0];
+  }
+  if (selector) {
+    options.selector = selector;
+  }
+  if (doneCallback) {
+    options.done = doneCallback;
+  }
+  if (dstSelector) {
+    options.dstSelector = dstSelector;
+  }
+  return options;
+}
+
+// Public API:
+/* harmony default export */ var js = __webpack_exports__["default"] = ({
+  snapshot() {
+    const options = parseSnapshotArguments(arguments);
+    const shutterbugWorker = new shutterbug_worker_ShutterbugWorker(options);
+    shutterbugWorker.getDomSnapshot();
+  },
+
+  enable(selector) {
+    this.disable();
+    selector = selector || 'body';
+    iframeWorker = new shutterbug_worker_ShutterbugWorker({ selector: selector });
+    iframeWorker.enableIframeCommunication();
+  },
+
+  disable() {
+    if (iframeWorker) {
+      iframeWorker.disableIframeCommunication();
+      iframeWorker = null;
+    }
+  },
+
+  // Supported events:
+  // 'saycheese' - triggered before snapshot is taken
+  // 'asyouwere' - triggered after snapshot is taken
+  on(event, handler) {
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).on('shutterbug-' + event, handler);
+  },
+
+  off(event, handler) {
+    external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(window).off('shutterbug-' + event, handler);
+  }
+});
+
+/***/ })
+/******/ ])["default"];
+});
