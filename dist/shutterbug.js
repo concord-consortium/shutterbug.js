@@ -104,6 +104,30 @@ function cloneDomItem($elem, elemTag) {
   return $returnElm;
 }
 
+// element should be an instance of Canvas or Video element (element supported as an input to Canvas.drawImage method).
+// In some cases dataURL should be rescaled down to real size of the element (high DPI displays).
+// It doesn't make sense to send original data, as it might be really large and cause issues while rendering page on
+// AWS Lambda.
+function getDataURL(element) {
+  // Always use png to support transparent background.
+  const format = 'image/png';
+  const realWidth = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(element).width();
+  const realHeight = external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(element).height();
+  const widthAttr = Number(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(element).attr('width')) || realWidth;
+  const heightAttr = Number(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(element).attr('height')) || realHeight;
+  if (realWidth === widthAttr && realHeight === heightAttr) {
+    return element.toDataURL(format);
+  }
+  // Scale down image to its real size.
+  const canvas = document.createElement('canvas');
+  canvas.width = realWidth;
+  canvas.height = realHeight;
+  const ctx = canvas.getContext('2d');
+  // Other canvas or video element can be used as a source in .drawImage.
+  ctx.drawImage(element, 0, 0, realWidth, realHeight);
+  return canvas.toDataURL(format);
+}
+
 function generateFullHtmlFromFragment(fragment) {
   return `
     <!DOCTYPE html> 
@@ -259,8 +283,7 @@ class shutterbug_worker_ShutterbugWorker {
       // Canvases.
       // .addBack('canvas') handles case when the clonedElement itself is a canvas.
       const replacementCanvasImgs = $element.find('canvas').addBack('canvas').map(function (i, elem) {
-        // Use png here, as it supports transparency and canvas can be layered on top of other elements.
-        const dataUrl = elem.toDataURL('image/png');
+        const dataUrl = getDataURL(elem);
         const img = cloneDomItem(external___root___jQuery___commonjs2___jquery___commonjs___jquery___amd___jquery___default()(elem), '<img>');
         img.attr('src', dataUrl);
         return img;
@@ -282,7 +305,7 @@ class shutterbug_worker_ShutterbugWorker {
         const canvas = cloneDomItem($elem, '<canvas>');
         canvas[0].getContext('2d').drawImage(elem, 0, 0, $elem.width(), $elem.height());
         try {
-          const dataUrl = canvas[0].toDataURL('image/png');
+          const dataUrl = getDataURL(canvas[0]);
           const img = cloneDomItem($elem, '<img>');
           img.attr('src', dataUrl);
           replacementVideoImgs.push(img);

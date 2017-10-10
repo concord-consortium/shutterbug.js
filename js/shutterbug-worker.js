@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { generateFullHtmlFromFragment, cloneDomItem } from './html-tools'
+import { generateFullHtmlFromFragment, cloneDomItem, getDataURL } from './html-tools'
 import DEFAULT_SERVER from './default-server'
 
 const MAX_TIMEOUT = 1500
@@ -131,8 +131,7 @@ export default class ShutterbugWorker {
       // Canvases.
       // .addBack('canvas') handles case when the clonedElement itself is a canvas.
       const replacementCanvasImgs = $element.find('canvas').addBack('canvas').map(function (i, elem) {
-        // Use png here, as it supports transparency and canvas can be layered on top of other elements.
-        const dataUrl = elem.toDataURL('image/png')
+        const dataUrl = getDataURL(elem)
         const img = cloneDomItem($(elem), '<img>')
         img.attr('src', dataUrl)
         return img
@@ -154,7 +153,7 @@ export default class ShutterbugWorker {
         const canvas = cloneDomItem($elem, '<canvas>')
         canvas[0].getContext('2d').drawImage(elem, 0, 0, $elem.width(), $elem.height())
         try {
-          const dataUrl = canvas[0].toDataURL('image/png')
+          const dataUrl = getDataURL(canvas[0])
           const img = cloneDomItem($elem, '<img>')
           img.attr('src', dataUrl)
           replacementVideoImgs.push(img)
