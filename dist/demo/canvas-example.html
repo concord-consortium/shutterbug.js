@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+  <head>
+    <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, button {
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        font-size: 20px;
+      }
+      #src1, #src2 {
+        display: inline-block;
+        border: 2px solid #b4130c;
+        padding: 10px;
+      }
+      #dst1, #dst2 {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+      #src2 {
+        width: 350px;
+        height: 350px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Regular canvas</h3>
+    <div>
+      <canvas id="src1" width="350" height="350"></canvas>
+    </div>
+    <button id="shutterbug1">Snapshot</button>
+    <div id="dst1">Destination container</div>
+    <h3>Upscaled canvas (e.g. for HDPI)</h3>
+    <div>
+      <canvas id="src2" width="700" height="700"></canvas>
+    </div>
+    <button id="shutterbug2">Snapshot</button>
+    <div id="dst2">Destination container</div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      var img = new Image();
+      img.onload = function () {
+        var ctx1 = $("#src1")[0].getContext("2d");
+        ctx1.fillStyle = "green";
+        ctx1.fillRect(0, 0, 350, 350);
+        ctx1.fillStyle = "orange";
+        ctx1.fillRect(10, 10, 330, 330);
+        ctx1.drawImage(img, 20, 20, 310, 310);
+
+        var ctx2 = $("#src2")[0].getContext("2d");
+        ctx2.fillStyle = "green";
+        ctx2.fillRect(0, 0, 700, 700);
+        ctx2.fillStyle = "orange";
+        ctx2.fillRect(20, 20, 660, 660);
+        ctx2.drawImage(img, 40, 40, 620, 620);
+      };
+      img.src = "The_Scream.jpg";
+
+      $("#shutterbug1").click(function(e) {
+        Shutterbug.snapshot("#src1", "#dst1", {
+          done: function(src) {
+            console.log("done handler");
+            console.log(src);
+          },
+          always: function() {
+            console.log("always handler");
+          }
+        });
+      });
+
+      $("#shutterbug2").click(function(e) {
+        Shutterbug.snapshot("#src2", "#dst2");
+      });
+    });
+  </script>
+</html>

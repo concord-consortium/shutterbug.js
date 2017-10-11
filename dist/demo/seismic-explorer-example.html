@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, iframe, button {
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        font-size: 20px;
+      }
+      #src1 {
+        border: 2px solid #b4130c;
+      }
+      #dst1 {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <iframe id="src1" src="http://seismic-explorer.concord.org/branch/master/index.html?plateMovementVisible&plateBoundariesVisible" width="800" height="600"></iframe>
+    <button id="shutterbug1">Snapshot</button>
+    <div><div id="dst1">Destination container</div></div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#shutterbug1").click(function() {
+        Shutterbug.snapshot("#src1", "#dst1");
+      });
+    });
+  </script>
+</html>

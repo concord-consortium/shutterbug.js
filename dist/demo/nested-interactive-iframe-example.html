@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <style type="text/css">
+        body {
+          font-family: Verdana, Arial, sans-serif;
+          padding: 0 10px;
+        }
+        div, button {
+          margin-bottom: 10px;
+        }
+        button {
+          display: block;
+          font-size: 20px;
+        }
+        #src {
+          display: inline-block;
+          border: 2px solid #b4130c;
+          padding: 10px;
+        }
+        #dst {
+          display: inline-block;
+          border: 2px solid #3f16b4;
+          padding: 3px;
+        }
+      </style>
+  </head>
+
+  <body>
+    <div id="src">
+      <iframe src="interactive-in-iframe.html" width="550" height="400"></iframe>
+    </div>
+    <button id="shutterbug">Snapshot</button>
+    <div id="dst">Destination container</div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      $("#shutterbug").click(function(e) {
+        Shutterbug.snapshot({
+          selector: "#src",
+          dstSelector: "#dst"
+        });
+      });
+    });
+  </script>
+</html>

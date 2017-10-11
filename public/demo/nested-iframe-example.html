@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="../shutterbug.js"></script>
+      <style type="text/css">
+        body {
+          font-family: Verdana, Arial, sans-serif;
+          padding: 0 10px;
+        }
+        div, iframe, button {
+          margin-bottom: 10px;
+        }
+        button {
+          display: block;
+          font-size: 20px;
+        }
+        #src1, #src2 {
+          border: 2px solid #b4130c;
+        }
+        #dst1, #dst2 {
+          display: inline-block;
+          border: 2px solid #3f16b4;
+          padding: 3px;
+        }
+      </style>
+  </head>
+
+  <body>
+    <iframe id="src1" src="iframe3.html" width="400" height="300"></iframe>
+    <button id="shutterbug1">Snapshot</button>
+    <div><div id="dst1">Destination container</div></div>
+    <iframe id="src2" src="iframe4.html" width="400" height="300"></iframe>
+    <button id="shutterbug2">Snapshot</button>
+    <div><div id="dst2">Destination container</div></div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      $("#shutterbug1").click(function(e) {
+        Shutterbug.snapshot("#src1", "#dst1");
+      });
+      $("#shutterbug2").click(function(e) {
+        Shutterbug.snapshot("#src2", "#dst2");
+      });
+    });
+  </script>
+</html>
