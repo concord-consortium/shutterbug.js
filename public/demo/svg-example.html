@@ -32,7 +32,7 @@
 
     <div>
       <h3>Inline SVG</h3>
-      <button id="make-svg-inlined-image" class="shutterbug">Snapshot</button>
+      <button id="make-svg-inlined-image">Snapshot</button>
       <div id="src-svg-inlined" class="src">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden" width="696" height="417.6" style="width: 696px; height: 417.6px;">
           <g class="particle-container-vis" transform="translate(0,0)">
@@ -528,7 +528,7 @@
 
     <script type="text/javascript">
       $(document).ready(function(e) {
-        $("button.shutterbug#make-svg-inlined-image").click(function(e) {
+        $("#make-svg-inlined-image").click(function(e) {
           Shutterbug.snapshot("#src-svg-inlined", "#image-svg-inlined-dst");
         });
       });
@@ -548,7 +548,7 @@
 
     <script type="text/javascript">
       $(document).ready(function(e) {
-        $("button.shutterbug#make-svg-embed-image").click(function(e) {
+        $("#make-svg-embed-image").click(function(e) {
           Shutterbug.snapshot("#src-svg-embed", "#image-svg-embed-dst");
         });
       });
