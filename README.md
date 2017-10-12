@@ -4,6 +4,10 @@
 
 Shutterbug has two parts: a browser JavaScript library for taking html snapshots, and a server side utility for turning those html snapshots into images. This repository consists of JavaScript library.
 
+## Examples
+
+http://concord-consortium.github.io/shutterbug.js/demo/
+
 ## Server-side tool
 
 https://github.com/concord-consortium/shutterbug-lambda
@@ -26,9 +30,7 @@ Elsewhere in your javascript, something like this:
       done: callbackFn, // optional
       fail: failCallbackFn, // optional
       always: alwaysCallbackFn, // optional
-      server: '//your.domain.com/shutterbug', // optional, default: "//snapshot.concord.org/shutterbug"
-      format: 'jpeg', // optional, default: 'png'
-      quality: 0.85 // optional, default: 1
+      server: '//your.domain.com/shutterbug' // optional, default: 'https://fh1fzvhx93.execute-api.us-east-1.amazonaws.com/production'
     });
 
 This will replace the contents of `$("#destinationSelector")` with an image tag which will magically spring into existence. `callbackFn` is an optional callback function which will be invoked with the image source. You can use either of them. Note that all the options are passed using simple object literal.
@@ -126,7 +128,8 @@ to the original code might be useful in the future.
     * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
-*  October 12, 2017 - v1.0.0
+
+* October 12, 2017 - v1.0.0
     * Works with the new server based on Chrome Headless and AWS Lambda
     * A few client-side fixes that ensure that snapshot looks right (dimensions, CSS, etc.)
     * New build system (brunch replaced with webpack)
@@ -134,27 +137,27 @@ to the original code might be useful in the future.
     * All the examples are refactored, so they're consistent and look cleaner, also added a few new ones
     * Handling of HDPI canvases and video elements
 
-*  March 30, 2016
+* March 30, 2016
     * Add .on and .off methods to the Shutterbug API
     
-*  December 18, 2015
+* December 18, 2015
     * Use relative paths in require() calls, so Shutterbug can work in NodeJS / NPM env.
     * Publish Shutterbug as NPM package.
     
-*  October 6, 2015
+* October 6, 2015
     * Minor change: Video example was incorrectly specifying the development server.
     
-*  Sept 10, 2015 – v0.5.7
+* Sept 10, 2015 – v0.5.7
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 
-*  December 15, 2014 – v0.5.4
+* December 15, 2014 – v0.5.4
     * Basic snapshot method is used when S3 direct upload fails.
 
-*  December 7, 2014 – v0.5.3
+* December 7, 2014 – v0.5.3
     * Bug fixes.
 
-*  December 4, 2014 – v0.5.0
-    * The first version after separation from the [server-side tool](https://github.com/concord-consortium/shutterbug).
+* December 4, 2014 – v0.5.0
+    * The first version after separation from the old [server-side tool](https://github.com/concord-consortium/shutterbug) (not used anymore).
 
 ## License ##
 
