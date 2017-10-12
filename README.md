@@ -4,9 +4,13 @@
 
 Shutterbug has two parts: a browser JavaScript library for taking html snapshots, and a server side utility for turning those html snapshots into images. This repository consists of JavaScript library.
 
+## Server-side tool
+
+https://github.com/concord-consortium/shutterbug-lambda
+
 ## Requirements & Dependencies
 
-shutterbug.js requires [JQuery](http://jquery.com/) and expects JQuery to be found via window.jQuery.
+shutterbug.js requires [JQuery](http://jquery.com/) and expects JQuery to be found via window.jQuery or available as npm module.
 
 ## Basic usage
 
@@ -122,6 +126,14 @@ to the original code might be useful in the future.
     * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
+*  October 12, 2017 - v1.0.0
+    * Works with the new server based on Chrome Headless and AWS Lambda
+    * A few client-side fixes that ensure that snapshot looks right (dimensions, CSS, etc.)
+    * New build system (brunch replaced with webpack)
+    * Code cleaned up and refactored to use ES6 syntax
+    * All the examples are refactored, so they're consistent and look cleaner, also added a few new ones
+    * Handling of HDPI canvases and video elements
+
 *  March 30, 2016
     * Add .on and .off methods to the Shutterbug API
     
@@ -132,16 +144,16 @@ to the original code might be useful in the future.
 *  October 6, 2015
     * Minor change: Video example was incorrectly specifying the development server.
     
-*  Sept 10, 2015 – v 0.5.7
+*  Sept 10, 2015 – v0.5.7
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 
-*  December 15, 2014 – v 0.5.4
+*  December 15, 2014 – v0.5.4
     * Basic snapshot method is used when S3 direct upload fails.
 
-*  December 7, 2014 – v 0.5.3
+*  December 7, 2014 – v0.5.3
     * Bug fixes.
 
-*  December 4, 2014 – v 0.5.0
+*  December 4, 2014 – v0.5.0
     * The first version after separation from the [server-side tool](https://github.com/concord-consortium/shutterbug).
 
 ## License ##

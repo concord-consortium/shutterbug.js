@@ -2,7 +2,7 @@
   "name": "shutterbug",
   "description": "HTML Snapshot",
   "author": "Piotr Janik <janikpiotrek@gmail.com>",
-  "version": "1.0.0-pre.4",
+  "version": "1.0.0",
   "main": "dist/shutterbug.js",
   "repository": {
     "type": "git",
