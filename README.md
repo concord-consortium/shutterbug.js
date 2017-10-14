@@ -129,6 +129,9 @@ to the original code might be useful in the future.
 
 ## Changes ##
 
+* October 14, 2017 - v1.0.1
+    * `dist/shutterbug.js` is now transpiled to ES5 compatible code
+
 * October 12, 2017 - v1.0.0
     * Works with the new server based on Chrome Headless and AWS Lambda
     * A few client-side fixes that ensure that snapshot looks right (dimensions, CSS, etc.)
