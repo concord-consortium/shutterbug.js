@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import { generateFullHtmlFromFragment, cloneDomItem, getDataURL } from './html-tools'
+import replaceBlobsWithDataURLs from './replace-blobs-with-data-urls'
 import DEFAULT_SERVER from './default-server'
 
 const MAX_TIMEOUT = 1500
@@ -59,7 +60,7 @@ export default class ShutterbugWorker {
       }, 1000)
     }
     // Ask for HTML fragment and render it on server.
-    this.getHtmlFragment((htmlData) => {
+    this.getHtmlFragment(htmlData => {
       $.ajax({
         url: this.server + '/make-snapshot',
         type: 'POST',
@@ -69,14 +70,14 @@ export default class ShutterbugWorker {
           this.callback(msg.url)
         }
         if (this.imgDst) {
-          $(this.imgDst).html(`<img src=${msg.url}>`);
+          $(this.imgDst).html(`<img src=${msg.url}>`)
         }
       }).fail((jqXHR, textStatus, errorThrown) => {
         if (this.failCallback) {
           this.failCallback(jqXHR, textStatus, errorThrown)
         }
         if (this.imgDst) {
-          $(this.imgDst).html(`Snapshot failed`);
+          $(this.imgDst).html(`Snapshot failed`)
         }
         console.error(textStatus, errorThrown)
       }).always(() => {
@@ -188,17 +189,25 @@ export default class ShutterbugWorker {
         'height': $element.height()
       })
 
-      const htmlData = {
-        content: $('<div>').append(clonedElement).html(),
-        css: $('<div>').append($('link[rel="stylesheet"]').clone()).append($('style').clone()).html(),
-        width: $element.outerWidth(),
-        height: $element.outerHeight(),
-        base_url: window.location.href
-      }
+      const htmlString = $('<div>').append(clonedElement).html()
+      const cssString = $('<div>').append($('link[rel="stylesheet"]').clone()).append($('style').clone()).html()
+      // Process HTML and CSS content when it's a string. Some operations are easier when we can use regular expressions
+      // instead of traversing the DOM using jQuery.
+      const htmlDeferred = replaceBlobsWithDataURLs(htmlString)
+      const cssDeferred = replaceBlobsWithDataURLs(cssString)
+      $.when(htmlDeferred, cssDeferred).done(function (processedHTMLString, processedCssString) {
+        const htmlData = {
+          content: processedHTMLString,
+          css: processedCssString,
+          width: $element.outerWidth(),
+          height: $element.outerHeight(),
+          base_url: window.location.href
+        }
 
-      $element.trigger('shutterbug-asyouwere')
+        $element.trigger('shutterbug-asyouwere')
 
-      callback(htmlData)
+        callback(htmlData)
+      })
     })
   }
 

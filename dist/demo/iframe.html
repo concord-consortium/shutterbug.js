@@ -14,10 +14,17 @@
   </head>
   <body>
     <div id="src">
-      (iframe)
+      (iframe with CSS link referencing Blob)
     </div>
   </body>
   <script type="text/javascript">
     Shutterbug.enable('#src');
+    // Generate CSS using Blob to test Blob replacement.
+    var blob = new Blob(['body { background: #93e07f; }'], {type: 'text/css'})
+    var link = document.createElement('link')
+    link.type = 'text/css'
+    link.rel = 'stylesheet'
+    link.href = URL.createObjectURL(blob)
+    document.head.appendChild(link)
   </script>
 </html>
