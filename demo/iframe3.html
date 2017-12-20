@@ -14,7 +14,7 @@
   </head>
   <body>
     <div id="src">
-      <p>(iframe that contains other iframes)</p>
+      <p>(iframe that contains other iframes and image with Blob source)</p>
       <iframe src="iframe.html" width="140" height="140"></iframe>
       <iframe src="iframe2.html" width="140" height="140"></iframe>
     </div>
@@ -22,5 +22,18 @@
   </body>
   <script type="text/javascript">
     Shutterbug.enable('#src');
+
+    // Add image using Blob to test Blob replacement.
+    var canvas = document.createElement('canvas');
+    canvas.width = 50;
+    canvas.height = 50;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'red';
+    ctx.fillRect(0, 0, 50, 50)
+    canvas.toBlob(function (blob) {
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(blob)
+      document.getElementById('src').appendChild(img)
+    });
   </script>
 </html>
