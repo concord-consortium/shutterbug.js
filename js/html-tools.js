@@ -20,9 +20,11 @@ export function getDataURL (element) {
   const format = 'image/png'
   const realWidth = $(element).width()
   const realHeight = $(element).height()
+  // When element hasn't been added to DOM, realWidth and realHeight will be equal to 0.
+  const realDimensionsAvailable = realWidth > 0 && realHeight > 0
   const widthAttr = Number($(element).attr('width')) || realWidth
   const heightAttr = Number($(element).attr('height')) || realHeight
-  if (realWidth === widthAttr && realHeight === heightAttr) {
+  if (!realDimensionsAvailable || realWidth === widthAttr && realHeight === heightAttr) {
     return element.toDataURL(format)
   }
   // Scale down image to its real size.

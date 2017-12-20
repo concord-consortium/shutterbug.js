@@ -131,6 +131,7 @@ to the original code might be useful in the future.
 
 * December 19, 2017 - v1.1.0
     * Support HTML elements referencing Blob instances (e.g. CSS links or images using href/src="blob:http://example.com/abc-xyz-123")
+    * Fix snapshot of Video elements
 
 * October 14, 2017 - v1.0.1
     * `dist/shutterbug.js` is now transpiled to ES5 compatible code

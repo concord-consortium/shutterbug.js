@@ -560,9 +560,11 @@ function getDataURL(element) {
   var format = 'image/png';
   var realWidth = (0, _jquery2.default)(element).width();
   var realHeight = (0, _jquery2.default)(element).height();
+  // When element hasn't been added to DOM, realWidth and realHeight will be equal to 0.
+  var realDimensionsAvailable = realWidth > 0 && realHeight > 0;
   var widthAttr = Number((0, _jquery2.default)(element).attr('width')) || realWidth;
   var heightAttr = Number((0, _jquery2.default)(element).attr('height')) || realHeight;
-  if (realWidth === widthAttr && realHeight === heightAttr) {
+  if (!realDimensionsAvailable || realWidth === widthAttr && realHeight === heightAttr) {
     return element.toDataURL(format);
   }
   // Scale down image to its real size.
