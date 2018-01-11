@@ -195,7 +195,11 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _htmlTools = __webpack_require__(3);
 
-var _defaultServer = __webpack_require__(4);
+var _replaceBlobsWithDataUrls = __webpack_require__(4);
+
+var _replaceBlobsWithDataUrls2 = _interopRequireDefault(_replaceBlobsWithDataUrls);
+
+var _defaultServer = __webpack_require__(5);
 
 var _defaultServer2 = _interopRequireDefault(_defaultServer);
 
@@ -404,17 +408,25 @@ var ShutterbugWorker = function () {
           'height': $element.height()
         });
 
-        var htmlData = {
-          content: (0, _jquery2.default)('<div>').append(clonedElement).html(),
-          css: (0, _jquery2.default)('<div>').append((0, _jquery2.default)('link[rel="stylesheet"]').clone()).append((0, _jquery2.default)('style').clone()).html(),
-          width: $element.outerWidth(),
-          height: $element.outerHeight(),
-          base_url: window.location.href
-        };
+        var htmlString = (0, _jquery2.default)('<div>').append(clonedElement).html();
+        var cssString = (0, _jquery2.default)('<div>').append((0, _jquery2.default)('link[rel="stylesheet"]').clone()).append((0, _jquery2.default)('style').clone()).html();
+        // Process HTML and CSS content when it's a string. Some operations are easier when we can use regular expressions
+        // instead of traversing the DOM using jQuery.
+        var htmlDeferred = (0, _replaceBlobsWithDataUrls2.default)(htmlString);
+        var cssDeferred = (0, _replaceBlobsWithDataUrls2.default)(cssString);
+        _jquery2.default.when(htmlDeferred, cssDeferred).done(function (processedHTMLString, processedCssString) {
+          var htmlData = {
+            content: processedHTMLString,
+            css: processedCssString,
+            width: $element.outerWidth(),
+            height: $element.outerHeight(),
+            base_url: window.location.href
+          };
 
-        $element.trigger('shutterbug-asyouwere');
+          $element.trigger('shutterbug-asyouwere');
 
-        callback(htmlData);
+          callback(htmlData);
+        });
       });
     }
 
@@ -548,9 +560,11 @@ function getDataURL(element) {
   var format = 'image/png';
   var realWidth = (0, _jquery2.default)(element).width();
   var realHeight = (0, _jquery2.default)(element).height();
+  // When element hasn't been added to DOM, realWidth and realHeight will be equal to 0.
+  var realDimensionsAvailable = realWidth > 0 && realHeight > 0;
   var widthAttr = Number((0, _jquery2.default)(element).attr('width')) || realWidth;
   var heightAttr = Number((0, _jquery2.default)(element).attr('height')) || realHeight;
-  if (realWidth === widthAttr && realHeight === heightAttr) {
+  if (!realDimensionsAvailable || realWidth === widthAttr && realHeight === heightAttr) {
     return element.toDataURL(format);
   }
   // Scale down image to its real size.
@@ -569,6 +583,77 @@ function generateFullHtmlFromFragment(fragment) {
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = replaceBlobsWithDataURLs;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Downloads `blobURL` and provides object with mapping to dataURL format.
+// Async function, returns $.Deferred instance that will be resolved with the mapping.
+function convertBlobToDataURL(blobURL) {
+  var requestDeferred = new _jquery2.default.Deferred();
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function () {
+    if (this.readyState === 4 && this.status === 200) {
+      var reader = new FileReader();
+      reader.addEventListener('loadend', function () {
+        requestDeferred.resolve({ blobURL: blobURL, dataURL: reader.result });
+      });
+      reader.readAsDataURL(this.response);
+    }
+  };
+  xhr.open('GET', blobURL);
+  xhr.responseType = 'blob';
+  xhr.send();
+  return requestDeferred;
+}
+
+// Converts all the blob URLs (e.g. "blob:http://examples.com/abc-def-ghi") in `htmlString` to data URLs.
+// Async function, returns $.Deferred instance that will be resolved with the final HTML.
+/* eslint-env browser */
+function replaceBlobsWithDataURLs(htmlString) {
+  var deferred = new _jquery2.default.Deferred();
+  var blobURLs = htmlString.match(/["']blob:.*?["']/gi);
+  if (blobURLs === null) {
+    // Nothing to do.
+    deferred.resolve(htmlString);
+    return deferred;
+  }
+
+  var blobRequests = blobURLs
+  // .slice(1, -1) removes " or ' from the URI.
+  .map(function (blobURLWithQuotes) {
+    return blobURLWithQuotes.slice(1, -1);
+  }).map(function (blobURL) {
+    return convertBlobToDataURL(blobURL);
+  });
+
+  _jquery2.default.when.apply(_jquery2.default, blobRequests).done(function () {
+    // Convert arguments to real Array instance.
+    var mappings = Array.prototype.slice.call(arguments);
+    var newHtmlString = htmlString;
+    mappings.forEach(function (mapping) {
+      newHtmlString = newHtmlString.replace(mapping.blobURL, mapping.dataURL);
+    });
+    deferred.resolve(newHtmlString);
+  });
+
+  return deferred;
+}
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
