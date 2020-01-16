@@ -24,7 +24,7 @@ export function getDataURL (element) {
   const realDimensionsAvailable = realWidth > 0 && realHeight > 0
   const widthAttr = Number($(element).attr('width')) || realWidth
   const heightAttr = Number($(element).attr('height')) || realHeight
-  if (!realDimensionsAvailable || realWidth === widthAttr && realHeight === heightAttr) {
+  if (!realDimensionsAvailable || (realWidth === widthAttr && realHeight === heightAttr)) {
     return element.toDataURL(format)
   }
   // Scale down image to its real size.
