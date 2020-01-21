@@ -344,7 +344,7 @@ var ShutterbugWorker = function () {
             // When iframe doesn't support Shutterbug, request will timeout and null will be received.
             // In such case just ignore this iframe, we won't be able to render it.
             if (nestedIFrames[i] == null) return;
-            (0, _jquery2.default)(iframeElem).attr('src', 'data:text/html,' + (0, _htmlTools.generateFullHtmlFromFragment)(nestedIFrames[i]));
+            (0, _jquery2.default)(iframeElem).attr('srcdoc', (0, _htmlTools.generateFullHtmlFromFragment)(nestedIFrames[i]));
           });
         }
 
@@ -662,9 +662,13 @@ function replaceBlobsWithDataURLs(htmlString) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+// Production:
 var DEFAULT_SERVER = 'https://fh1fzvhx93.execute-api.us-east-1.amazonaws.com/production';
-// To work with local Shutterbug server use:
-// const DEFAULT_SERVER = 'http://localhost:3000'
+// Staging:
+// const DEFAULT_SERVER = 'https://dgjr6g3z30.execute-api.us-east-1.amazonaws.com/staging'
+// Local:
+// const DEFAULT_SERVER = 'http://localhost:4000'
+
 exports.default = DEFAULT_SERVER;
 
 /***/ })

@@ -125,7 +125,7 @@ export default class ShutterbugWorker {
           // When iframe doesn't support Shutterbug, request will timeout and null will be received.
           // In such case just ignore this iframe, we won't be able to render it.
           if (nestedIFrames[i] == null) return
-          $(iframeElem).attr('src', 'data:text/html,' + generateFullHtmlFromFragment(nestedIFrames[i]))
+          $(iframeElem).attr('srcdoc', generateFullHtmlFromFragment(nestedIFrames[i]))
         })
       }
 

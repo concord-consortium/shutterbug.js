@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, iframe, button {
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        font-size: 20px;
+      }
+      #src1, #src2 {
+        border: 2px solid #b4130c;
+      }
+      #dst1, #dst2 {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>Hurricane model </h3>
+    <iframe id="src2" src="https://hurricane.concord.org/branch/master/index.html?overlay=stormSurge" width="1000" height="800"></iframe>
+    <button id="shutterbug1">Snapshot</button>
+    <div><div id="dst1">Destination container</div></div>
+    <h3>Hurricane model (long URL)</h3>
+    <iframe id="src1" src="https://hurricane.concord.org/branch/master/index.html?overlay=stormSurge&pressureSystems=%5B%7B%22type%22%3A%22high%22%2C%22center%22%3A%7B%22lat%22%3A26.705439761115944%2C%22lng%22%3A-32.88242340087891%7D%2C%22strength%22%3A20%7D%2C%7B%22type%22%3A%22high%22%2C%22center%22%3A%7B%22lat%22%3A25.310511227182708%2C%22lng%22%3A-57.794609069824226%7D%2C%22strength%22%3A13%7D%2C%7B%22type%22%3A%22low%22%2C%22center%22%3A%7B%22lat%22%3A47.2480086373258%2C%22lng%22%3A-65.4943084716797%7D%2C%22strength%22%3A7%7D%2C%7B%22type%22%3A%22low%22%2C%22center%22%3A%7B%22lat%22%3A44.762824214255026%2C%22lng%22%3A-86.83593750000001%7D%2C%22strength%22%3A6%7D%5D" width="1000" height="800"></iframe>
+    <button id="shutterbug2">Snapshot</button>
+    <div><div id="dst2">Destination container</div></div>
+
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#shutterbug1").click(function() {
+        Shutterbug.snapshot("#src1", "#dst1");
+      });
+      $("#shutterbug2").click(function() {
+        Shutterbug.snapshot("#src2", "#dst2");
+      });
+    });
+  </script>
+</html>
