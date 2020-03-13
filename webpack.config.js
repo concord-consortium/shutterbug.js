@@ -3,6 +3,8 @@ var webpack = require('webpack')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
+  mode: 'development',
+
   entry: {
     shutterbug: './js/index.js'
   },
@@ -19,7 +21,7 @@ module.exports = {
     }
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -28,7 +30,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.optimize.ModuleConcatenationPlugin(),
     new CopyWebpackPlugin([
       {from: 'public'}
     ])
@@ -44,4 +45,3 @@ module.exports = {
     }
   ]
 }
-
