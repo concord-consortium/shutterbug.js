@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, button {
+        margin-bottom: 10px;
+      }
+      button {
+        display: block;
+        font-size: 20px;
+      }
+      #src {
+        display: inline-block;
+        border: 2px solid #b4130c;
+        padding: 10px;
+      }
+      #dst {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+    </style>
+    <!-- this empty style will be used to insert style rules -->
+    <style></style>
+  </head>
+  <body>
+    <div id="src">
+      <h3>Testing CSS using insertRule</h3>
+      <div id="test-div">
+        Hello world!
+      </div>
+    </div>
+
+    <button id="shutterbug">Snapshot</button>
+    <div id="dst">Destination container</div>
+    <p>
+      The Hello world above should have a green background which was added using insertRule.
+    </p>
+    <p>
+      Note, this is currently broken. The html captured from the page does not include
+      the dynamically styles.
+    </p>
+    <p>
+      This should be fixable to by improving our css serialization to use a form like: document.styleSheets[1].cssRules[0].cssText
+    </p>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(e) {
+      $("#shutterbug").click(function(e) {
+        Shutterbug.snapshot("#src", "#dst");
+      });
+
+      // This is the dynamic adding of style rules
+      document.styleSheets[1].insertRule('#test-div { background: green }')
+    });
+  </script>
+</html>
