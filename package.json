@@ -9,7 +9,7 @@
     "url": "https://github.com/concord-consortium/shutterbug.js"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode=production",
     "server": "webpack-dev-server",
     "lint": "standard --fix js/**/*.js"
   },
