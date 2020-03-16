@@ -110,14 +110,6 @@ npm run server
 ```
 and open [http://localhost:8080/demo](http://localhost:8080/demo).
 
-If you want to include a development version of shutterbug.js in another webpack application using `npm link`
-I've found it necessary to add this to the webpack config of the application
-```
-resolve: { symlinks: false }
-```
-Otherwise when the application loads shutterbug it tries to find jQuery relative to shutterbug instead of
-the main application.
-
 ### Code style
 
 This project uses StandardJS style: https://standardjs.com
@@ -134,6 +126,22 @@ to the original code might be useful in the future.
     * You can see the current demos in the [github pages](http://concord-consortium.github.io/shutterbug.js/demo/)
     * Useful examples are available in `public/demo`.
     * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
+
+### Using local shutterbug in local application
+
+You can include shutterbug.js in another node based application using `npm link`
+So the npm documentation for more details on that command.
+
+However webpack does some fancy stuff with symlinks that breaks the way this library
+is loading jQuery as an 'external'. The solution that worked for me was to add
+the following configuration to the webpack.config.js of the application (not the library)
+
+```
+resolve: { symlinks: false }
+```
+
+Without this you will see an error in the application about not being able to find
+jquery within the shutterbug directory.
 
 ## Changes ##
 
