@@ -106,9 +106,17 @@ npm run build
 ```
 or start webpack dev server:
 ```
-npm run server 
+npm run server
 ```
 and open [http://localhost:8080/demo](http://localhost:8080/demo).
+
+If you want to include a development version of shutterbug.js in another webpack application using `npm link`
+I've found it necessary to add this to the webpack config of the application
+```
+resolve: { symlinks: false }
+```
+Otherwise when the application loads shutterbug it tries to find jQuery relative to shutterbug instead of
+the main application.
 
 ### Code style
 
@@ -116,7 +124,7 @@ This project uses StandardJS style: https://standardjs.com
 
 Before committing your changes should run:
 ```
-npm run lint 
+npm run lint
 ```
 and check if there are some errors. Most of them will be fixed automatically since we use `--fix` flag.
 Also, `js/peels` directory is ignored as it's based on the external codebase and keeping it similar
@@ -128,6 +136,12 @@ to the original code might be useful in the future.
     * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
 ## Changes ##
+
+* March 16, 2019 - v1.3.0
+    * Support css rules that are added dynamically, for example styled-components will do this
+
+* January 16, 2020 - v1.2.0
+    * Switch to using srcdoc attribute for nested iframes, this is necessary to work with newer versions of Chrome
 
 * December 19, 2017 - v1.1.0
     * Support HTML elements referencing Blob instances (e.g. CSS links or images using href/src="blob:http://example.com/abc-xyz-123")
@@ -146,14 +160,14 @@ to the original code might be useful in the future.
 
 * March 30, 2016
     * Add .on and .off methods to the Shutterbug API
-    
+
 * December 18, 2015
     * Use relative paths in require() calls, so Shutterbug can work in NodeJS / NPM env.
     * Publish Shutterbug as NPM package.
-    
+
 * October 6, 2015
     * Minor change: Video example was incorrectly specifying the development server.
-    
+
 * Sept 10, 2015 – v0.5.7
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 
