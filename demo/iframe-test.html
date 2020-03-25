@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+      <title>demo</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../shutterbug.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana, Arial, sans-serif;
+        padding: 0 10px;
+      }
+      div, iframe, button {
+        margin-bottom: 10px;
+      }
+      button.snapshot {
+        display: block;
+        font-size: 20px;
+      }
+      #src1 {
+        border: 2px solid #b4130c;
+      }
+      #dst1 {
+        display: inline-block;
+        border: 2px solid #3f16b4;
+        padding: 3px;
+      }
+      .url-field {
+        width: 600px;
+      }
+      .dimension-field {
+        width: 50px;
+      }
+      label {
+        padding-right: 6px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <label>URL</label>
+      <input id="url-field" class="url-field" type="text"></input>
+      <br>
+      <label>Width</label><input id="width" class="dimensiont-field" type="text"></input>
+      <label>Height</label><input id="height" class="dimensiont-field" type="text"></input>
+      <button id="update">Update iframe</button>
+    </div>
+    <iframe id="src1"></iframe>
+    <button class="snapshot" id="shutterbug1">Snapshot</button>
+    <div><div id="dst1">Destination container</div></div>
+  </body>
+  <script type="text/javascript">
+    function update() {
+      const url = $("#url-field").val(),
+        width = $("#width").val(),
+        height = $("#height").val();
+
+      $("#src1")
+        .attr('width', width)
+        .attr('height', height)
+        .attr('src', url);
+
+      let params = new URLSearchParams()
+      params.set("url", url);
+      params.set("width", width);
+      params.set("height", height);
+      history.pushState({}, "", "?" + params.toString());
+    }
+
+    $(document).ready(function() {
+      // read the URL parameter for url, width, and height
+      // construct the iframe element based on these
+      let params = (new URL(document.location)).searchParams;
+
+      $("#url-field").val(params.get('url'));
+      $("#width").val(params.get('width') || '800');
+      $("#height").val(params.get('height') || '600');
+
+      update();
+
+      $("#update").click(function () {
+        update();
+      })
+
+      $("#shutterbug1").click(function() {
+        Shutterbug.snapshot("#src1", "#dst1");
+      });
+    });
+  </script>
+</html>
