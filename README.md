@@ -106,7 +106,7 @@ npm run build
 ```
 or start webpack dev server:
 ```
-npm run server 
+npm run server
 ```
 and open [http://localhost:8080/demo](http://localhost:8080/demo).
 
@@ -116,7 +116,7 @@ This project uses StandardJS style: https://standardjs.com
 
 Before committing your changes should run:
 ```
-npm run lint 
+npm run lint
 ```
 and check if there are some errors. Most of them will be fixed automatically since we use `--fix` flag.
 Also, `js/peels` directory is ignored as it's based on the external codebase and keeping it similar
@@ -127,7 +127,29 @@ to the original code might be useful in the future.
     * Useful examples are available in `public/demo`.
     * They use default Shutterbug server which is specified in `js/default-server.js`. When you develop server-side features, you might want to overwrite its value to local server, so all the examples will automatically use it.
 
+### Using local shutterbug in local application
+
+You can include shutterbug.js in another node based application using `npm link`
+So the npm documentation for more details on that command.
+
+However webpack does some fancy stuff with symlinks that breaks the way this library
+is loading jQuery as an 'external'. The solution that worked for me was to add
+the following configuration to the webpack.config.js of the application (not the library)
+
+```
+resolve: { symlinks: false }
+```
+
+Without this you will see an error in the application about not being able to find
+jquery within the shutterbug directory.
+
 ## Changes ##
+
+* March 16, 2019 - v1.3.0
+    * Support css rules that are added dynamically, for example styled-components will do this
+
+* January 16, 2020 - v1.2.0
+    * Switch to using srcdoc attribute for nested iframes, this is necessary to work with newer versions of Chrome
 
 * December 19, 2017 - v1.1.0
     * Support HTML elements referencing Blob instances (e.g. CSS links or images using href/src="blob:http://example.com/abc-xyz-123")
@@ -146,14 +168,14 @@ to the original code might be useful in the future.
 
 * March 30, 2016
     * Add .on and .off methods to the Shutterbug API
-    
+
 * December 18, 2015
     * Use relative paths in require() calls, so Shutterbug can work in NodeJS / NPM env.
     * Publish Shutterbug as NPM package.
-    
+
 * October 6, 2015
     * Minor change: Video example was incorrectly specifying the development server.
-    
+
 * Sept 10, 2015 – v0.5.7
     * Add support for snapshotting `<video>` elements. (@dougmartin)
 

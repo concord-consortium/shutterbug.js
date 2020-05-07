@@ -12,6 +12,34 @@ function getID () {
   return _id++
 }
 
+function getCSSString () {
+  // originally this was
+  // $('<div>').append($('link[rel="stylesheet"]').clone()).append($('style').clone()).html()
+  // but that missed any rules added with insertRule
+
+  // start out the result with all of the remote style sheets
+  let result = $('<div>').append($('link[rel="stylesheet"]').clone())
+
+  // document.styleSheets[1].cssRules[0].cssText
+  for(let i=0; i<document.styleSheets.length; i++) {
+    let sheet = document.styleSheets[i]
+
+    // skip the sheets that are <link.. elements
+    if(sheet.href !== null) {
+      continue
+    }
+
+    var cssText = ""
+    var styleElement = $('<style>').attr('type',sheet.type)
+    for(let j=0; j<sheet.cssRules.length; j++){
+      styleElement.append(sheet.cssRules[j].cssText + "\n")
+    }
+    result.append(styleElement)
+  }
+
+  return result.html()
+}
+
 export default class ShutterbugWorker {
   constructor (options) {
     const opt = options || {}
@@ -44,6 +72,7 @@ export default class ShutterbugWorker {
   disableIframeCommunication () {
     window.removeEventListener('message', this._postMessageHandler, false)
   }
+
 
   getDomSnapshot () {
     this.enableIframeCommunication() // !!!
@@ -190,7 +219,7 @@ export default class ShutterbugWorker {
       })
 
       const htmlString = $('<div>').append(clonedElement).html()
-      const cssString = $('<div>').append($('link[rel="stylesheet"]').clone()).append($('style').clone()).html()
+      const cssString = getCSSString()
       // Process HTML and CSS content when it's a string. Some operations are easier when we can use regular expressions
       // instead of traversing the DOM using jQuery.
       const htmlDeferred = replaceBlobsWithDataURLs(htmlString)
