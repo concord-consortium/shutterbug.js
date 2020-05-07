@@ -44,11 +44,12 @@
       The Hello world above should have a green background which was added using insertRule.
     </p>
     <p>
-      Note, this is currently broken. The html captured from the page does not include
-      the dynamically styles.
+      Shutterbug handles this case by serializing the rules of the stylesheets on the page
+      like this: document.styleSheets[1].cssRules[0].cssText
     </p>
     <p>
-      This should be fixable to by improving our css serialization to use a form like: document.styleSheets[1].cssRules[0].cssText
+      When insertRule is used the text inside the style element remains unchanged so
+      cloning that element will not capture the dyanmically added styles.
     </p>
   </body>
   <script type="text/javascript">
