@@ -48,6 +48,15 @@ By itself `shutterbug.js` is useful for authors of iframe'able content. With `sh
     <script src="shutterbug.js"></script>
     <script>Shutterbug.enable('body');</script>
 
+## Canvas and Video elements
+
+Shutterbug.js will try to automatically handle `<canvas>` and `<video>` tags. It will try to replace them with a `<img>` that has a dataURI src with the content from the canvas or video.  This will only work of the canvas is not tainted.  So for a canvas element if it has been loaded with images then those images need to come from the same domain as the page that is taking the snapshot. If you are running shutterbug.js in an iframe that means the video needs to be on the same domain as the iframe.
+
+It is possible to snapshot cross origin videos if the video tag has a `crossorigin=anonymous` attribute and the video file handles the Origin header and sends down the correct CORS headers. https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video#attr-crossorigin
+Additional info is here: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin
+
+This same approach might work for `<canvas>` if any images loaded into had the crossorigin attribute set. This hasn't been tested though. More details are here: https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image
+
 ## Advanced usage
 
 ### IFrame support
@@ -143,9 +152,27 @@ resolve: { symlinks: false }
 Without this you will see an error in the application about not being able to find
 jquery within the shutterbug directory.
 
+## Debugging LARA Interactive ##
+
+If the interactive doesn't use authored state you can use http://concord-consortium.github.io/shutterbug.js/demo/iframe-test.html
+
+If the interactive uses authored state the page above won't work because it doesn't initialize the interactive. So here are a couple options to work around this.
+
+The best approach is to run shutterbug-lambda locally, and run LARA locally. In your LARA folder add a variable to .env
+
+    SHUTTERBUG_URI=http://localhost:4000
+
+Another approach is to get the serialized html from the interactive and save it to a local file and then add the URL to that local file to http://concord-consortium.github.io/shutterbug.js/demo/iframe-test.html
+
+If you are getting back a broken image, you can get the serialized html by trying to snapshot the interactive on a LARA staging and look at the browser network log. You'll see a result from /make-snapshot that includes the URL to image. Replace the .png with .html and you'll have a URL to the html that was sent to shutterbug-lamba. You can use this URL directly and it will likely show the same problem you see when using the real interactive in LARA. But it is not technically exactly the same as what is being sent to the shutterbug-lambda server from LARA. To make the request be closer you need to get the html content out of the iframe from that .html file. You can do that by opening the file in a browser, inspect it with developer tools, expand the iframe element, select the html element inside of the iframe and edit it as html. This will give you a text field of the html. The same html is availble directly in the srcdoc attribute of the iframe, but it is has escaped elements in it. Finally save this html content as a new file locally, serve it with a webserver, and put the URL to that file into the iframe-test.html page.
+
+If you are getting an error from the shutterbug server, you will need to check the cloudwatch logs for the error and from there you can find the url to the initial html file. From there you can follow the steps above to extact its iframe contents.
+
+It would also be possible to make a new lara-interactive-test.html page which allowed you to pass in some authored state to the interactive which might make debugging easier.
+
 ## Changes ##
 
-* March 16, 2019 - v1.3.0
+* March 16, 2020 - v1.3.0
     * Support css rules that are added dynamically, for example styled-components will do this
 
 * January 16, 2020 - v1.2.0
