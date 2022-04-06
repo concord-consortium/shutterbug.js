@@ -436,7 +436,8 @@ var ShutterbugWorker = function () {
     value: function getHtmlFragment(callback) {
       var _this3 = this;
 
-      var $element = (0, _jquery2.default)(this.element);
+      var self = this;
+      var $element = (0, _jquery2.default)(self.element);
 
       // .find('iframe').addBack("iframe") handles two cases:
       // - element itself is an iframe - .addBack('iframe')

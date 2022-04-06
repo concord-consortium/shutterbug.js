@@ -121,7 +121,8 @@ export default class ShutterbugWorker {
 
   // Most important method. Returns HTML, CSS and dimensions of the snapshot.
   getHtmlFragment (callback) {
-    const $element = $(this.element)
+    const self = this
+    const $element = $(self.element)
 
     // .find('iframe').addBack("iframe") handles two cases:
     // - element itself is an iframe - .addBack('iframe')
