@@ -186,12 +186,25 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
-var MAX_TIMEOUT = 1500; // Each shutterbug instance on a single page requires unique ID (iframe-iframe communication).
+var MAX_TIMEOUT = 1500; // Shutterbug backend URL can be overwritten for testing using SERVER_URL_PARAM_NAME query param.
+// Eg ?shutterbugUrl=https://dgjr6g3z30.execute-api.us-east-1.amazonaws.com/staging
+
+var SERVER_URL_PARAM_NAME = "shutterbugUrl"; // Each shutterbug instance on a single page requires unique ID (iframe-iframe communication).
 
 var _id = 0;
 
 function getID() {
   return _id++;
+}
+
+function getURLParam(name) {
+  var url = (self || window).location.href;
+  name = name.replace(/[[]]/g, "\\$&");
+  var regex = new RegExp("[#?&]".concat(name, "(=([^&#]*)|&|#|$)"));
+  var results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return true;
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function getCSSString() {
@@ -237,7 +250,7 @@ var ShutterbugWorker = /*#__PURE__*/function () {
     this.failCallback = opt.fail;
     this.alwaysCallback = opt.always;
     this.imgDst = opt.dstSelector;
-    this.server = opt.server || _default_server__WEBPACK_IMPORTED_MODULE_3__["default"];
+    this.server = getURLParam(SERVER_URL_PARAM_NAME) || opt.server || _default_server__WEBPACK_IMPORTED_MODULE_3__["default"];
     this.id = getID();
     this.iframeReqTimeout = MAX_TIMEOUT; // Bind and save a new function, so it works well with .add/removeEventListener().
 

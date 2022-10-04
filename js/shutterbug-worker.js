@@ -4,12 +4,25 @@ import replaceBlobsWithDataURLs from './replace-blobs-with-data-urls'
 import DEFAULT_SERVER from './default-server'
 
 const MAX_TIMEOUT = 1500
+// Shutterbug backend URL can be overwritten for testing using SERVER_URL_PARAM_NAME query param.
+// Eg ?shutterbugUrl=https://dgjr6g3z30.execute-api.us-east-1.amazonaws.com/staging
+const SERVER_URL_PARAM_NAME = "shutterbugUrl"
 
 // Each shutterbug instance on a single page requires unique ID (iframe-iframe communication).
 let _id = 0
 
 function getID () {
   return _id++
+}
+
+function getURLParam(name) {
+  const url = (self || window).location.href;
+  name = name.replace(/[[]]/g, "\\$&");
+  const regex = new RegExp(`[#?&]${name}(=([^&#]*)|&|#|$)`);
+  const results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return true;
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function getCSSString () {
@@ -54,7 +67,7 @@ export default class ShutterbugWorker {
     this.failCallback = opt.fail
     this.alwaysCallback = opt.always
     this.imgDst = opt.dstSelector
-    this.server = opt.server || DEFAULT_SERVER
+    this.server = getURLParam(SERVER_URL_PARAM_NAME) || opt.server || DEFAULT_SERVER
 
     this.id = getID()
     this.iframeReqTimeout = MAX_TIMEOUT
