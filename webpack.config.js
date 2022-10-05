@@ -29,9 +29,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyWebpackPlugin([
-      {from: 'public'}
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public' }
+      ],
+    })
   ],
   externals: [
     {
