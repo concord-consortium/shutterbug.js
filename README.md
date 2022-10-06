@@ -117,7 +117,7 @@ or start webpack dev server:
 ```
 npm run server
 ```
-and open [http://localhost:8080/demo](http://localhost:8080/demo).
+and open [http://localhost:8080/demo/](http://localhost:8080/demo/).
 
 ### Code style
 

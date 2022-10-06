@@ -198,13 +198,8 @@ function getID() {
 }
 
 function getURLParam(name) {
-  var url = (self || window).location.href;
-  name = name.replace(/[[]]/g, "\\$&");
-  var regex = new RegExp("[#?&]".concat(name, "(=([^&#]*)|&|#|$)"));
-  var results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return true;
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
+  var searchParams = new URLSearchParams((self || window).location.search);
+  return searchParams.get(name);
 }
 
 function getCSSString() {
