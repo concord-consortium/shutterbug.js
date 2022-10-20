@@ -1,7 +1,7 @@
 // Production:
-const DEFAULT_SERVER = 'https://fh1fzvhx93.execute-api.us-east-1.amazonaws.com/production'
+const DEFAULT_SERVER = 'https://api.concord.org/shutterbug-production'
 // Staging:
-// const DEFAULT_SERVER = 'https://dgjr6g3z30.execute-api.us-east-1.amazonaws.com/staging'
+// const DEFAULT_SERVER = 'https://api.concord.org/shutterbug-staging'
 // Local:
 // const DEFAULT_SERVER = 'http://localhost:4000'
 

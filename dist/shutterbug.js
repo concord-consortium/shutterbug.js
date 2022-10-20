@@ -23,8 +23,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // Production:
-var DEFAULT_SERVER = 'https://fh1fzvhx93.execute-api.us-east-1.amazonaws.com/production'; // Staging:
-// const DEFAULT_SERVER = 'https://dgjr6g3z30.execute-api.us-east-1.amazonaws.com/staging'
+var DEFAULT_SERVER = 'https://api.concord.org/shutterbug-production'; // Staging:
+// const DEFAULT_SERVER = 'https://api.concord.org/shutterbug-staging'
 // Local:
 // const DEFAULT_SERVER = 'http://localhost:4000'
 
@@ -290,7 +290,7 @@ var ShutterbugWorker = /*#__PURE__*/function () {
 
       this.getHtmlFragment(function (htmlData) {
         jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
-          url: _this2.server + '/make-snapshot',
+          url: _this2.server,
           type: 'POST',
           data: JSON.stringify(htmlData)
         }).done(function (msg) {
