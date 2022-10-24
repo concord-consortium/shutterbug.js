@@ -99,7 +99,7 @@ export default class ShutterbugWorker {
     // Ask for HTML fragment and render it on server.
     this.getHtmlFragment(htmlData => {
       $.ajax({
-        url: this.server + '/make-snapshot',
+        url: this.server,
         type: 'POST',
         data: JSON.stringify(htmlData)
       }).done(msg => {
